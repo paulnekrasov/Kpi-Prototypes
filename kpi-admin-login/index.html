@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель СР КПІ</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Meta instructions -->
+    <meta name="description" content="Адмін панель СР КПІ. Авторизація.">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 0C8.95431 0 0 8.95431 0 20C0 31.0457 8.95431 40 20 40V0Z" fill="var(--primary-btn)" />
+                    <rect x="24" y="10" width="8" height="30" fill="var(--primary-btn)" />
+                </svg>
+                <div class="logo-text">
+                    СТУДРАДА<br>КПІ
+                </div>
+            </div>
+
+            <button class="mode-toggle" id="themeToggle" aria-label="Toggle theme">
+                <div class="toggle-icon active" id="sunIconWrapper">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+                <div class="toggle-icon" id="moonIconWrapper">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </div>
+            </button>
+        </header>
+
+        <main class="main-content">
+            <h1 class="headline">РАДІ ВІТАТИ В<br>ПАНЕЛІ СР КПІ</h1>
+
+            <div class="login-container">
+                <button class="btn-outline">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M17.64 9.2045C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z"
+                            fill="#4285F4" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z"
+                            fill="#34A853" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29H0.957275V4.95818C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z"
+                            fill="#FBBC05" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z"
+                            fill="#EA4335" />
+                    </svg>
+                    Увійти з Google
+                </button>
+
+                <div class="divider">
+                    <span class="line"></span>
+                    <span class="text">АБО</span>
+                    <span class="line"></span>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">
+                        Email<span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" placeholder="youremail@email.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">
+                        Пароль<span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+                        <button type="button" class="icon-btn" aria-label="Toggle password visibility"
+                            id="togglePassword">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <a href="forgot-password.html" class="forgot-password">Забули Пароль?</a>
+
+                <button class="btn-primary">Увійти в адмін панель</button>
+            </div>
+
+            <p class="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
