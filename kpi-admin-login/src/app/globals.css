@@ -79,16 +79,16 @@ body {
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
   user-select: none;
+  color: var(--text-main);
+  min-height: 44px;
+  min-width: 44px;
 }
 
-.logo-text {
-  font-family: var(--font-title);
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 1.1;
-  color: var(--text-main);
+.logo svg {
+  height: 44px;
+  width: auto;
+  transition: color var(--transition-smooth);
 }
 
 /* Mode Toggle */
@@ -100,8 +100,8 @@ body {
   align-items: center;
   padding: 2px 6px 2px 2px;
   gap: 11px;
+  transition: background-color var(--transition-smooth);
   cursor: pointer;
-  transition: background-color var(--transition-smooth), transform var(--transition-fast);
 }
 
 .mode-toggle:hover {
@@ -120,6 +120,9 @@ body {
   justify-content: center;
   border-radius: 8px;
   color: var(--toggle-icon-inactive);
+  background: none;
+  border: none;
+  cursor: pointer;
   transition: all var(--transition-smooth);
 }
 
@@ -141,7 +144,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 10px 16px;
   border: 1px solid var(--stroke-subtle);
   border-radius: 6px;
   color: var(--text-main);
@@ -176,6 +179,12 @@ body {
   max-width: 573px;
   padding-top: 16px;
   padding-bottom: 16px;
+}
+
+.main-content::before {
+  content: "";
+  display: block;
+  margin-top: auto;
 }
 
 .headline {
@@ -223,7 +232,9 @@ body {
 .btn-outline,
 .btn-primary {
   width: 100%;
-  height: 48px;
+  min-height: 48px;
+  height: auto;
+  padding: 10px 16px;
   border-radius: 8px;
   font-family: var(--font-primary);
   font-weight: 600;
@@ -378,11 +389,12 @@ body {
 
 .input-wrapper input {
   width: 100%;
-  height: 48px;
+  min-height: 48px;
+  height: auto;
   background-color: var(--bg-input);
   border: 1px solid var(--stroke-subtle);
   border-radius: 8px;
-  padding: 0 16px;
+  padding: 10px 16px;
   font-family: var(--font-primary);
   font-size: 16px;
   color: var(--text-main);
@@ -413,12 +425,31 @@ body {
   color: var(--text-main);
 }
 
+.input-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 0;
+  align-self: stretch;
+}
+
+.input-status-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-hint {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-right: 16px;
+}
+
 .status-text {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 14px;
-  margin-top: 8px;
   padding-left: 8px;
 }
 
@@ -512,12 +543,12 @@ body {
 
   .btn-outline,
   .btn-primary {
-    height: 46px;
+    min-height: 46px;
     font-size: 15px;
   }
 
   .input-wrapper input {
-    height: 46px;
+    min-height: 46px;
     font-size: 15px;
   }
 
@@ -537,16 +568,13 @@ body {
   }
 
   .logo svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .logo-text {
-    font-size: 13px;
+    height: 36px;
+    width: auto;
   }
 
   .logo {
-    gap: 8px;
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .mode-toggle {
@@ -587,15 +615,15 @@ body {
 
   .btn-outline,
   .btn-primary {
-    height: 44px;
+    min-height: 44px;
     font-size: 14px;
     border-radius: 8px;
   }
 
   .input-wrapper input {
-    height: 44px;
+    min-height: 44px;
     font-size: 14px;
-    padding: 0 12px;
+    padding: 10px 12px;
   }
 
   .input-group {

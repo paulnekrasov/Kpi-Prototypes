@@ -114,9 +114,8 @@ export default function Home() {
             onBlur={() => validatePassword(password)}
             status={passStatus}
             message={passMsg}
+            hint={<Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>}
           />
-
-          <Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>
 
           <button className="btn-primary" onClick={handleSubmit}>Увійти в адмін панель</button>
         </div>
