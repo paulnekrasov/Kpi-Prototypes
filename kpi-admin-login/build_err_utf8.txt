@@ -1,0 +1,27 @@
+﻿
+> kpi-admin-login@0.1.0 build
+> next build
+
+тЦ▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+тЬУ Compiled successfully in 14.0s
+  Running TypeScript ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/7) ...
+  Generating static pages using 3 workers (1/7) 
+  Generating static pages using 3 workers (3/7) 
+  Generating static pages using 3 workers (5/7) 
+тЬУ Generating static pages using 3 workers (7/7) in 1160.2ms
+  Finalizing page optimization ...
+
+Route (app)
+тФМ тЧЛ /
+тФЬ тЧЛ /_not-found
+тФЬ тЧЛ /check-email
+тФЬ тЧЛ /forgot-password
+тФФ тЧЛ /new-password
+
+
+тЧЛ  (Static)  prerendered as static content
+

@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Header } from "@/components/Header";
+import React, { useState } from "react";
 import { InputGroup } from "@/components/InputGroup";
 
 export default function Home() {
@@ -24,7 +23,7 @@ export default function Home() {
     setEmail(val);
     if (val.trim() !== '') {
       if (validateEmailFormat(val)) {
-        setEmailStatus("success");
+        setEmailStatus("default");
         setEmailMsg("");
       } else {
         setEmailStatus("error");
@@ -40,7 +39,7 @@ export default function Home() {
     setPassword(val);
     if (val.trim() !== '') {
       if (val.length >= 6) {
-        setPassStatus("success");
+        setPassStatus("default");
         setPassMsg("");
       } else {
         setPassStatus("error");
@@ -71,57 +70,60 @@ export default function Home() {
 
   return (
     <>
-      <Header />
-      <main className="main-content">
-        <h1 className="headline">РАДІ ВІТАТИ В<br />ПАНЕЛІ СР КПІ</h1>
+      <div className="form-content-wrapper">
+        <main className="main-content">
+          <div className="login-container">
+            <h1 className="headline">ПАНЕЛЬ СР КПІ</h1>
 
-        <div className="login-container">
-          <button className="btn-outline">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd" clipRule="evenodd" d="M17.64 9.2045C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z" fill="#4285F4" />
-              <path fillRule="evenodd" clipRule="evenodd" d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853" />
-              <path fillRule="evenodd" clipRule="evenodd" d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29H0.957275V4.95818C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05" />
-              <path fillRule="evenodd" clipRule="evenodd" d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335" />
-            </svg>
-            Увійти з Google
-          </button>
+            <InputGroup
+              label="Email"
+              type="email"
+              name="email"
+              placeholder="youremail@email.com"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => validateEmail(e.target.value)}
+              onBlur={() => validateEmail(email)}
+              status={emailStatus}
+              message={emailMsg}
+            />
 
-          <div className="divider">
-            <span className="line"></span>
-            <span className="text">АБО</span>
-            <span className="line"></span>
+            <InputGroup
+              label="Пароль"
+              type="password"
+              name="password"
+              placeholder="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => validatePassword(e.target.value)}
+              onBlur={() => validatePassword(password)}
+              status={passStatus}
+              message={passMsg}
+              hint={<Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>}
+            />
+
+            <button className="btn-primary" onClick={handleSubmit}>Увійти у панель</button>
+
+            <div className="divider">
+              <span className="line"></span>
+              <span className="text">АБО</span>
+              <span className="line"></span>
+            </div>
+
+            <button className="btn-outline">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" clipRule="evenodd" d="M17.64 9.2045C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z" fill="#4285F4" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29H0.957275V4.95818C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335" />
+              </svg>
+              Увійти з Google
+            </button>
           </div>
 
-          <InputGroup
-            label="Email"
-            type="email"
-            placeholder="youremail@email.com"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => validateEmail(e.target.value)}
-            onBlur={() => validateEmail(email)}
-            status={emailStatus}
-            message={emailMsg}
-          />
-
-          <InputGroup
-            label="Пароль"
-            type="password"
-            placeholder="Password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => validatePassword(e.target.value)}
-            onBlur={() => validatePassword(password)}
-            status={passStatus}
-            message={passMsg}
-            hint={<Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>}
-          />
-
-          <button className="btn-primary" onClick={handleSubmit}>Увійти в адмін панель</button>
-        </div>
-
-        <p className="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
-      </main>
+          <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ.</p>
+        </main>
+      </div>
     </>
   );
 }

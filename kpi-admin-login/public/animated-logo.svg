@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%" data-mode="both">
+  <defs>
+    <linearGradient id="left-front-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="rgba(163, 214, 255, 0.95)" />
+      <stop offset="40%" stop-color="rgba(94, 169, 242, 0.85)" />
+      <stop offset="100%" stop-color="rgba(33, 98, 173, 0.9)" />
+    </linearGradient>
+    
+    <linearGradient id="left-cut-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#143e6b" />
+      <stop offset="50%" stop-color="#2460a1" />
+      <stop offset="100%" stop-color="#559eeb" />
+    </linearGradient>
+
+    <linearGradient id="left-bevel-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="12%" stop-color="#a8d6ff" />
+      <stop offset="60%" stop-color="#266abb" />
+      <stop offset="100%" stop-color="#0b2c52" />
+    </linearGradient>
+
+    <linearGradient id="right-front-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="rgba(191, 230, 255, 0.95)" />
+      <stop offset="50%" stop-color="rgba(110, 185, 255, 0.85)" />
+      <stop offset="100%" stop-color="rgba(43, 117, 196, 0.9)" />
+    </linearGradient>
+
+    <linearGradient id="right-cut-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#82c3ff" />
+      <stop offset="60%" stop-color="#2a71bf" />
+      <stop offset="100%" stop-color="#17457a" />
+    </linearGradient>
+
+    <linearGradient id="right-bevel-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="20%" stop-color="#8abcf0" />
+      <stop offset="70%" stop-color="#2b75c7" />
+      <stop offset="100%" stop-color="#123d6e" />
+    </linearGradient>
+
+    <linearGradient id="shine-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(255, 255, 255, 0)" />
+      <stop offset="50%" stop-color="rgba(255, 255, 255, 0.6)" />
+      <stop offset="100%" stop-color="rgba(255, 255, 255, 0)" />
+    </linearGradient>
+
+    <filter id="glass-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="8" dy="16" stdDeviation="12" flood-color="#031121" flood-opacity="0.25" />
+    </filter>
+
+    <filter id="specular-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <mask id="logo-mask">
+      <path d="M 390,100 A 300,300 0 0,0 390,700 L 340,640 A 240,240 0 0,1 340,160 Z" fill="white" />
+      <path d="M 390,100 L 340,160 L 340,640 L 390,700 Z" fill="white" />
+      <path d="M 340,160 A 240,240 0 0,0 340,640 Z" fill="white" />
+      <path d="M 410,200 A 200,200 0 0,1 410,600 L 460,540 A 140,140 0 0,0 460,260 Z" fill="white" />
+      <path d="M 410,200 L 460,260 L 460,540 L 410,600 Z" fill="white" />
+      <path d="M 460,260 A 140,140 0 0,1 460,540 Z" fill="white" />
+    </mask>
+  </defs>
+
+  <style>
+    :root {
+      --dur-rotate: 5s;
+      --dur-shine: 4s;
+      --rot-amount: 3deg;
+      --base-tilt: -15deg;
+    }
+
+    .logo-container {
+      transform-origin: 400px 400px;
+      transform: rotate(var(--base-tilt));
+      will-change: transform;
+    }
+
+    .shine-layer {
+      opacity: 0;
+      pointer-events: none;
+      mix-blend-mode: overlay;
+    }
+
+    .shine-bar {
+      will-change: transform;
+    }
+
+    /* Mode: Rotate */
+    svg[data-mode="rotate"] .logo-container,
+    svg[data-mode="both"] .logo-container {
+      animation: micro-rotate var(--dur-rotate) ease-in-out infinite alternate;
+    }
+
+    /* Mode: Shine */
+    svg[data-mode="shine"] .shine-layer,
+    svg[data-mode="both"] .shine-layer {
+      opacity: 1;
+    }
+
+    svg[data-mode="shine"] .shine-bar,
+    svg[data-mode="both"] .shine-bar {
+      animation: sweep var(--dur-shine) cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes micro-rotate {
+      0% { transform: rotate(calc(var(--base-tilt) - var(--rot-amount))) translate(-2px, -3px); }
+      100% { transform: rotate(calc(var(--base-tilt) + var(--rot-amount))) translate(2px, 3px); }
+    }
+
+    @keyframes sweep {
+      0% { transform: translateX(-300px) skewX(-25deg); }
+      60%, 100% { transform: translateX(900px) skewX(-25deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo-container, .shine-bar {
+        animation: none !important;
+      }
+      .shine-layer {
+        opacity: 0 !important;
+      }
+    }
+  </style>
+
+  <g class="logo-container" filter="url(#glass-shadow)">
+    
+    <g id="leftPiece">
+      <path d="M 390,100 A 300,300 0 0,0 390,700 L 340,640 A 240,240 0 0,1 340,160 Z" 
+            fill="url(#left-bevel-grad)" />
+      
+      <path d="M 390,100 L 340,160 L 340,640 L 390,700 Z" 
+            fill="url(#left-cut-grad)" />
+      
+      <path d="M 340,160 A 240,240 0 0,0 340,640 Z" 
+            fill="url(#left-front-grad)" />
+
+      <path d="M 340,160 A 240,240 0 0,0 340,640 Z" 
+            fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+      <path d="M 390,100 A 300,300 0 0,0 120,270" 
+            fill="none" stroke="#ffffff" stroke-width="3" filter="url(#specular-glow)" opacity="0.8" stroke-linecap="round"/>
+    </g>
+
+    <g id="rightPiece">
+      <path d="M 410,200 A 200,200 0 0,1 410,600 L 460,540 A 140,140 0 0,0 460,260 Z" 
+            fill="url(#right-bevel-grad)" />
+      
+      <path d="M 410,200 L 460,260 L 460,540 L 410,600 Z" 
+            fill="url(#right-cut-grad)" />
+      
+      <path d="M 460,260 A 140,140 0 0,1 460,540 Z" 
+            fill="url(#right-front-grad)" />
+
+      <path d="M 460,260 A 140,140 0 0,1 460,540 Z" 
+            fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" />
+      <path d="M 410,200 A 200,200 0 0,1 590,320" 
+            fill="none" stroke="#ffffff" stroke-width="2.5" filter="url(#specular-glow)" opacity="0.7" stroke-linecap="round"/>
+    </g>
+
+    <g class="shine-layer" mask="url(#logo-mask)">
+      <rect class="shine-bar" x="0" y="-100" width="180" height="1000" fill="url(#shine-grad)" />
+    </g>
+
+  </g>
+</svg>

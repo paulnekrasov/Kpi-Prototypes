@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Header } from "@/components/Header";
 import { InputGroup } from "@/components/InputGroup";
 import { useRouter } from "next/navigation";
 
@@ -20,8 +19,8 @@ export default function ForgotPassword() {
         setEmail(val);
         if (val.trim() !== '') {
             if (validateEmailFormat(val)) {
-                setEmailStatus("success");
-                setEmailMsg("Чудово! Все добре.");
+                setEmailStatus("default");
+                setEmailMsg("");
             } else {
                 setEmailStatus("error");
                 setEmailMsg("Недійсний email");
@@ -47,29 +46,31 @@ export default function ForgotPassword() {
 
     return (
         <>
-            <Header showBack backHref="/" />
-            <main className="main-content">
-                <h1 className="headline">ЗАБУЛИ ПАРОЛЬ?</h1>
-                <p className="subtitle">Введіть електронну адресу, якщо вона правильна вам буде надіслано лист для відновленя паролю.</p>
+            <div className="form-content-wrapper">
+                <main className="main-content">
+                    <div className="login-container">
+                        <h1 className="headline">ЗАБУЛИ ПАРОЛЬ?</h1>
+                        <p className="subtitle">Введіть електронну адресу, якщо вона правильна вам буде надіслано лист для відновленя паролю.</p>
 
-                <div className="login-container">
-                    <InputGroup
-                        label="Email"
-                        type="email"
-                        placeholder="youremail@email.com"
-                        autoComplete="email"
-                        value={email}
-                        onChange={(e) => validateEmail(e.target.value)}
-                        onBlur={() => validateEmail(email)}
-                        status={emailStatus}
-                        message={emailMsg}
-                    />
+                        <InputGroup
+                            label="Email"
+                            type="email"
+                            name="email"
+                            placeholder="youremail@email.com"
+                            autoComplete="email"
+                            value={email}
+                            onChange={(e) => validateEmail(e.target.value)}
+                            onBlur={() => validateEmail(email)}
+                            status={emailStatus}
+                            message={emailMsg}
+                        />
 
-                    <button className="btn-primary" onClick={handleSubmit}>Надіслати електрону адресу</button>
-                </div>
+                        <button className="btn-primary" onClick={handleSubmit}>Надіслати електрону адресу</button>
+                    </div>
 
-                <p className="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
-            </main>
+                    <p className="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
+                </main>
+            </div>
         </>
     );
 }
