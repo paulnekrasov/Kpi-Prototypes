@@ -102,7 +102,7 @@ export default function Home() {
               hint={<Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>}
             />
 
-            <button className="btn-primary" onClick={handleSubmit}>Увійти в адмін панель</button>
+            <button className="btn-primary" onClick={handleSubmit}>Увійти у панель</button>
 
             <div className="divider">
               <span className="line"></span>
@@ -121,7 +121,7 @@ export default function Home() {
             </button>
           </div>
 
-          <p className="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
+          <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ.</p>
         </main>
       </div>
     </>
