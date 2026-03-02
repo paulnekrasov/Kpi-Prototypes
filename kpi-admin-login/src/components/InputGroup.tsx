@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { Eye, EyeSlash, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -9,6 +9,8 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     message?: string;
     requiredAsterisk?: boolean;
     hint?: React.ReactNode;
+    containerStyle?: React.CSSProperties;
+    containerClassName?: string;
 }
 
 export function InputGroup({
@@ -17,21 +19,26 @@ export function InputGroup({
     message,
     requiredAsterisk = true,
     hint,
+    containerStyle,
+    containerClassName,
     ...props
 }: InputProps) {
+    const defaultId = useId();
+    const elementId = props.id || defaultId;
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = props.type === "password";
 
     const inputType = isPassword && showPassword ? "text" : props.type;
 
     return (
-        <div className="input-group">
-            <label>
+        <div className={`input-group ${containerClassName || ""}`} style={containerStyle}>
+            <label htmlFor={elementId}>
                 {label}
                 {requiredAsterisk && <span className="required" style={{ color: status === 'success' ? 'var(--accent-success)' : status === 'error' ? 'var(--destructive)' : 'var(--destructive)' }}>*</span>}
             </label>
             <div className="input-wrapper">
                 <input
+                    id={elementId}
                     {...props}
                     type={inputType}
                     className={`${props.className || ""} ${status === "success" ? "input-success" : status === "error" ? "input-error" : ""
