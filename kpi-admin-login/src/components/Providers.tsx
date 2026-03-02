@@ -5,7 +5,7 @@ import React from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem enableColorScheme>
             {children}
         </ThemeProvider>
     );

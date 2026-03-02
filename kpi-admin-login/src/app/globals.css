@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --bg-primary: #f3f5fa;
   --bg-input: #f3f5fa;
   --text-main: #00010d;
@@ -30,6 +31,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg-primary: #05050f;
   --bg-input: #0a0b1a;
   --text-main: #f3f5fa;
@@ -113,7 +115,7 @@ body {
 .layout-illustration-side {
   flex: 1 1 500px;
   width: 100%;
-  max-width: 500px;
+  max-width: 400px;
   aspect-ratio: 1;
   display: flex;
   align-items: flex-start;
@@ -349,7 +351,7 @@ body {
 }
 
 .email-highlight {
-  font-family: 'Onest', sans-serif;
+  font-family: var(--font-primary);
   font-weight: 600;
 }
 

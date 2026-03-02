@@ -92,7 +92,7 @@ export default function NewPassword() {
         validateNewPasswords(newPassword, val);
     };
 
-    const handleSubmit = (e: React.MouseEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         validateNewPasswords(newPassword, confirmPassword);
 
@@ -125,7 +125,7 @@ export default function NewPassword() {
                 <main className="main-content content-wide">
                     <div className="form-back-wrapper">
                         <BackNavigation />
-                        <div className="login-container">
+                        <form className="login-container" onSubmit={handleSubmit}>
                             <h1 className="headline">СТВОРІТЬ НОВИЙ ПАРОЛЬ</h1>
                             <p className="subtitle">Введіть новий пароль і підтвердіть його</p>
 
@@ -265,13 +265,13 @@ export default function NewPassword() {
                             />
 
                             <button
+                                type="submit"
                                 className="btn-primary"
-                                onClick={handleSubmit}
                                 style={{ marginTop: 24 }}
                             >
                                 Зберігти Пароль
                             </button>
-                        </div>
+                        </form>
                     </div>
 
                 </main>
