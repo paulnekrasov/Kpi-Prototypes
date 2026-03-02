@@ -28,14 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk" className={`${onest.className} ${onest.variable} ${unbounded.variable}`} suppressHydrationWarning>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
           <div className="layout-wrapper">
             <Header />
             <div className="layout-split">
               <div className="layout-illustration-side">
                 <div className="illustration-wrapper">
-                  <img src="/animated-logo.svg" alt="Animated Logo" className="animated-logo" />
+                  <img src="/updated-animated-logo.svg" alt="Animated Logo" className="animated-logo" />
                 </div>
               </div>
               <div className="layout-form-side">

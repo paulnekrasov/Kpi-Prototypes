@@ -16,7 +16,7 @@ export default function CheckEmail() {
                         <button className="btn-primary" onClick={() => router.push('/new-password')}>Повернутися до авторизації</button>
                     </div>
 
-                    <p className="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
+                    <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
                 </main>
             </div>
         </>

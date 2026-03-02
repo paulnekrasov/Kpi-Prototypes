@@ -53,7 +53,7 @@ export default function ForgotPassword() {
                         <p className="subtitle">Введіть електронну адресу, якщо вона правильна вам буде надіслано лист для відновленя паролю.</p>
 
                         <InputGroup
-                            label="Email"
+                            label="Електронна пошта"
                             type="email"
                             name="email"
                             placeholder="youremail@email.com"
@@ -65,10 +65,10 @@ export default function ForgotPassword() {
                             message={emailMsg}
                         />
 
-                        <button className="btn-primary" onClick={handleSubmit}>Надіслати електрону адресу</button>
+                        <button className="btn-primary" onClick={handleSubmit}>Надіслати електронну адресу</button>
                     </div>
 
-                    <p className="footer-text">Обмежений доступ. Тільки для персоналу СР КПІ</p>
+                    <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
                 </main>
             </div>
         </>

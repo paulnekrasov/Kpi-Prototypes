@@ -76,7 +76,7 @@ export default function Home() {
             <h1 className="headline">ПАНЕЛЬ СР КПІ</h1>
 
             <InputGroup
-              label="Email"
+              label="Електронна пошта"
               type="email"
               name="email"
               placeholder="youremail@email.com"
@@ -92,7 +92,7 @@ export default function Home() {
               label="Пароль"
               type="password"
               name="password"
-              placeholder="Password"
+              placeholder="Пароль"
               autoComplete="current-password"
               value={password}
               onChange={(e) => validatePassword(e.target.value)}
@@ -121,7 +121,7 @@ export default function Home() {
             </button>
           </div>
 
-          <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ.</p>
+          <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
         </main>
       </div>
     </>

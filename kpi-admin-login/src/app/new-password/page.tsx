@@ -124,14 +124,14 @@ export default function NewPassword() {
                 <main className="main-content content-wide">
                     <div className="login-container">
                         <h1 className="headline">СТВОРІТЬ НОВИЙ ПАРОЛЬ</h1>
-                        <p className="subtitle">Введіть новий пароль і підвердіть його</p>
+                        <p className="subtitle">Введіть новий пароль і підтвердіть його</p>
 
                         <InputGroup
-                            label="New Password"
+                            label="Новий пароль"
                             type="password"
                             name="newPassword"
                             autoComplete="new-password"
-                            placeholder="Password"
+                            placeholder="Пароль"
                             value={newPassword}
                             onChange={handleNewPassChange}
                             onBlur={() =>
@@ -144,7 +144,7 @@ export default function NewPassword() {
 
                         {/* Password strength indicator — always visible when typing */}
                         <div
-                            aria-label="Password strength"
+                            aria-label="Надійність пароля"
                             aria-valuemax={requirements.length}
                             aria-valuemin={0}
                             aria-valuenow={strengthScore}
@@ -247,11 +247,11 @@ export default function NewPassword() {
                         <div style={{ height: (showSmartHint || showSuccessFeedback) ? "12px" : "20px", transition: "height 300ms ease-out" }} />
 
                         <InputGroup
-                            label="Confirm New Password"
+                            label="Підтвердіть новий пароль"
                             type="password"
                             name="confirmPassword"
                             autoComplete="new-password"
-                            placeholder="Password"
+                            placeholder="Пароль"
                             value={confirmPassword}
                             onChange={handleConfPassChange}
                             onBlur={() =>
@@ -271,7 +271,7 @@ export default function NewPassword() {
                     </div>
 
                     <p className="footer-text">
-                        Обмежений доступ. Тільки для персоналу СР КПІ
+                        Обмежений доступ. Тільки для команди СР КПІ
                     </p>
                 </main>
             </div>

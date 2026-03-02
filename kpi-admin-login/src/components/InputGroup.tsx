@@ -34,7 +34,6 @@ export function InputGroup({
         <div className={`input-group ${containerClassName || ""}`} style={containerStyle}>
             <label htmlFor={elementId}>
                 {label}
-                {requiredAsterisk && <span className="required" style={{ color: status === 'success' ? 'var(--accent-success)' : status === 'error' ? 'var(--destructive)' : 'var(--destructive)' }}>*</span>}
             </label>
             <div className="input-wrapper">
                 <input
@@ -48,7 +47,7 @@ export function InputGroup({
                     <button
                         type="button"
                         className="icon-btn"
-                        aria-label="Toggle password visibility"
+                        aria-label="Показати/приховати пароль"
                         onClick={() => setShowPassword(!showPassword)}
                     >
                         {showPassword ? (
