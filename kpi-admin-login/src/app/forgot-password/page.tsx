@@ -32,7 +32,7 @@ export default function ForgotPassword() {
         }
     };
 
-    const handleSubmit = (e: React.MouseEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         validateEmail(email);
         if (emailStatus === "error" || email.trim() === "") {
@@ -51,7 +51,7 @@ export default function ForgotPassword() {
                 <main className="main-content">
                     <div className="form-back-wrapper">
                         <BackNavigation />
-                        <div className="login-container">
+                        <form className="login-container" onSubmit={handleSubmit}>
                             <h1 className="headline">ЗАБУЛИ ПАРОЛЬ?</h1>
                             <p className="subtitle">Введіть електронну адресу, якщо вона правильна вам буде надіслано лист для відновленя паролю.</p>
 
@@ -68,8 +68,8 @@ export default function ForgotPassword() {
                                 message={emailMsg}
                             />
 
-                            <button className="btn-primary" onClick={handleSubmit}>Надіслати електронну адресу</button>
-                        </div>
+                            <button type="submit" className="btn-primary">Надіслати електронну адресу</button>
+                        </form>
                     </div>
 
                 </main>

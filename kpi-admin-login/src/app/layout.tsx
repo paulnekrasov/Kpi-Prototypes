@@ -27,6 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk" className={`${onest.className} ${onest.variable} ${unbounded.variable}`} suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#05050f" media="(prefers-color-scheme: dark)" />
+      </head>
       <body suppressHydrationWarning>
         <Providers>
           <div className="layout-wrapper">

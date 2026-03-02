@@ -51,12 +51,12 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = (e: React.MouseEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     validateEmail(email);
     validatePassword(password);
 
     if (emailStatus === "error" || passStatus === "error" || email.trim() === "" || password.trim() === "") {
-      e.preventDefault();
       if (email.trim() === "") {
         setEmailStatus("error");
         setEmailMsg("Обов'язкове поле");
@@ -72,7 +72,7 @@ export default function Home() {
     <>
       <div className="form-content-wrapper">
         <main className="main-content">
-          <div className="login-container">
+          <form className="login-container" onSubmit={handleSubmit}>
             <h1 className="headline">ПАНЕЛЬ СР КПІ</h1>
 
             <InputGroup
@@ -102,7 +102,7 @@ export default function Home() {
               hint={<Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>}
             />
 
-            <button className="btn-primary" onClick={handleSubmit}>Увійти у панель</button>
+            <button type="submit" className="btn-primary">Увійти у панель</button>
 
             <div className="divider">
               <span className="line"></span>
@@ -110,7 +110,7 @@ export default function Home() {
               <span className="line"></span>
             </div>
 
-            <button className="btn-outline">
+            <button type="button" className="btn-outline">
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fillRule="evenodd" clipRule="evenodd" d="M17.64 9.2045C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.2045Z" fill="#4285F4" />
                 <path fillRule="evenodd" clipRule="evenodd" d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853" />
@@ -119,7 +119,7 @@ export default function Home() {
               </svg>
               Увійти з Google
             </button>
-          </div>
+          </form>
         </main>
       </div>
     </>
