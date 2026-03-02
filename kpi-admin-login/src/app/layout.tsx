@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
-import { BackNavigation } from "@/components/BackNavigation";
 
 const onest = Onest({
   variable: "--font-onest",
@@ -39,9 +38,11 @@ export default function RootLayout({
                 </div>
               </div>
               <div className="layout-form-side">
-                <BackNavigation />
                 {children}
               </div>
+            </div>
+            <div className="footer-wrapper">
+              <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
             </div>
           </div>
         </Providers>
