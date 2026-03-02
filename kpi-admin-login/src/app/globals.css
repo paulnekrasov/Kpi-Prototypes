@@ -72,6 +72,7 @@ body {
   width: 100%;
   padding: 16px 48px;
   align-items: center;
+  position: relative;
 }
 
 .page-wrapper {
@@ -87,11 +88,11 @@ body {
 .layout-split {
   display: flex;
   flex-direction: row;
-  min-height: calc(100vh - 100px);
+  flex: 1;
   width: 100%;
   max-width: 1100px;
-  margin: 24px auto;
-  align-items: flex-start;
+  margin: 0 auto;
+  align-items: stretch;
   justify-content: center;
   gap: 48px;
   background-color: transparent;
@@ -102,7 +103,6 @@ body {
   max-width: 500px;
   width: 100%;
   background-color: transparent;
-  position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -116,12 +116,13 @@ body {
   max-width: 500px;
   aspect-ratio: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background-color: transparent;
   position: relative;
   overflow: visible;
   border: none;
+  align-self: center;
 }
 
 .illustration-wrapper {
@@ -199,16 +200,23 @@ body {
   align-items: center;
   padding: 4px;
   gap: 4px;
+  position: relative;
   transition: background-color var(--transition-smooth);
-  cursor: pointer;
 }
 
-.mode-toggle:hover {
-  transform: scale(1.05);
-}
-
-.mode-toggle:active {
-  transform: scale(0.95);
+/* Sliding pill — absolutely positioned, driven by --active-index */
+.toggle-pill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 40px;
+  height: 32px;
+  border-radius: 6px;
+  background-color: var(--toggle-pill);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateX(calc(var(--active-index, 1) * (40px + 4px)));
+  transition: transform var(--transition-smooth), background-color var(--transition-smooth);
+  pointer-events: none;
 }
 
 .toggle-icon {
@@ -222,13 +230,36 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  transition: all var(--transition-smooth);
+  position: relative;
+  z-index: 1;
+  transition: color var(--transition-smooth), transform var(--transition-fast);
 }
 
 .toggle-icon.active {
-  background-color: var(--toggle-pill);
   color: var(--toggle-icon-active);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-icon:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.toggle-icon:not(.active):hover {
+  color: var(--toggle-pill);
+}
+
+.toggle-icon:active {
+  transform: scale(0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-pill {
+    transition: none;
+  }
+
+  .toggle-icon {
+    transition: none;
+  }
 }
 
 .header-container {
@@ -250,8 +281,6 @@ body {
   text-decoration: none;
   font-size: 16px;
   line-height: 1.3;
-  margin-bottom: 16px;
-  margin-left: 32px;
   align-self: flex-start;
   transition: all var(--transition-smooth);
 }
@@ -288,14 +317,10 @@ body {
   align-items: stretch;
   justify-content: center;
   width: 100%;
-  padding: 0px 32px 12px 32px;
+  padding: 0px 32px 0px 32px;
 }
 
-.main-content::before {
-  content: "";
-  display: block;
-  margin-top: auto;
-}
+
 
 .headline {
   font-family: var(--font-title);
@@ -304,6 +329,7 @@ body {
   line-height: 1.2;
   text-align: left;
   margin-bottom: 20px;
+  text-wrap: balance;
 }
 
 .subtitle {
@@ -315,6 +341,7 @@ body {
   color: var(--text-main);
   letter-spacing: -0.15px;
   margin-bottom: 24px;
+  text-wrap: balance;
 }
 
 .email-sent {
@@ -328,6 +355,13 @@ body {
 
 .content-wide {
   max-width: 646px;
+}
+
+.form-back-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
 .login-container {
@@ -592,6 +626,7 @@ body {
   gap: 4px;
   font-size: 14px;
   padding-left: 8px;
+  text-wrap: balance;
 }
 
 .status-text.success {
@@ -642,13 +677,18 @@ body {
   text-decoration: underline;
 }
 
-.footer-text {
+.footer-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
   margin-top: auto;
-  padding-top: 32px;
+  flex-shrink: 0;
+}
+
+.footer-text {
   font-size: 14px;
   color: var(--text-muted);
   text-align: center;
-  flex-shrink: 0;
 }
 
 /* Large screens: scale headline, expand layout, grow SVG */
@@ -715,14 +755,13 @@ body {
   }
 
   .footer-text {
-    padding-top: 24px;
     font-size: 16px;
   }
 }
 
 @media (max-width: 400px) {
   .page-wrapper {
-    padding: 12px 16px 20px 16px;
+    padding: 12px 16px 12px 16px;
   }
 
   .header {
@@ -740,13 +779,23 @@ body {
   }
 
   .mode-toggle {
-    padding: 2px 4px 2px 2px;
-    gap: 6px;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .toggle-pill {
+    width: 36px;
+    height: 28px;
+    top: 3px;
+    left: 3px;
+    transform: translateX(calc(var(--active-index, 1) * (36px + 3px)));
   }
 
   .toggle-icon {
     width: 36px;
     height: 28px;
+    min-width: 36px;
+    min-height: 28px;
   }
 
   .toggle-icon svg {
@@ -769,7 +818,7 @@ body {
   .main-content {
     max-width: 100%;
     padding-top: 8px;
-    padding-bottom: 8px;
+    padding-bottom: 0px;
   }
 
   .content-wide {
@@ -826,7 +875,6 @@ body {
   }
 
   .footer-text {
-    padding-top: 16px;
     font-size: 12px;
   }
 }

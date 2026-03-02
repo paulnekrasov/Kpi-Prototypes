@@ -120,8 +120,6 @@ export default function Home() {
               Увійти з Google
             </button>
           </div>
-
-          <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
         </main>
       </div>
     </>

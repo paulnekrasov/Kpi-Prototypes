@@ -4,53 +4,59 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Laptop, Sun, Moon } from "@phosphor-icons/react";
 
+const THEMES = ["light", "system", "dark"] as const;
+type ThemeOption = typeof THEMES[number];
+
+const THEME_INDEX: Record<ThemeOption, number> = {
+    light: 0,
+    system: 1,
+    dark: 2,
+};
+
 export function ThemeToggle() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // eslint-disable-next-line
         setMounted(true);
     }, []);
 
-    if (!mounted) {
-        return (
-            <div className="mode-toggle" aria-label="Toggle theme">
-                <button className="toggle-icon" aria-label="Light mode">
-                    <Sun size={24} weight="bold" />
-                </button>
-                <button className="toggle-icon active" aria-label="System mode">
-                    <Laptop size={24} weight="bold" />
-                </button>
-                <button className="toggle-icon" aria-label="Dark mode">
-                    <Moon size={24} weight="bold" />
-                </button>
-            </div>
-        );
-    }
+    const activeTheme = (mounted ? theme : "system") as ThemeOption;
+    const activeIndex = THEME_INDEX[activeTheme] ?? 1;
 
     return (
-        <div className="mode-toggle" aria-label="Toggle theme">
+        <div
+            className="mode-toggle"
+            role="group"
+            aria-label="Вибір теми"
+            style={{ "--active-index": activeIndex } as React.CSSProperties}
+        >
+            {/* Sliding pill */}
+            <span className="toggle-pill" aria-hidden="true" />
+
             <button
-                className={`toggle-icon ${theme === "light" ? "active" : ""}`}
+                className={`toggle-icon ${activeTheme === "light" ? "active" : ""}`}
                 onClick={() => setTheme("light")}
-                aria-label="Light mode"
+                aria-label="Світла тема"
+                aria-pressed={activeTheme === "light"}
             >
-                <Sun size={24} weight="bold" />
+                <Sun size={20} weight="bold" aria-hidden="true" />
             </button>
             <button
-                className={`toggle-icon ${theme === "system" ? "active" : ""}`}
+                className={`toggle-icon ${activeTheme === "system" ? "active" : ""}`}
                 onClick={() => setTheme("system")}
-                aria-label="System mode"
+                aria-label="Системна тема"
+                aria-pressed={activeTheme === "system"}
             >
-                <Laptop size={24} weight="bold" />
+                <Laptop size={20} weight="bold" aria-hidden="true" />
             </button>
             <button
-                className={`toggle-icon ${theme === "dark" ? "active" : ""}`}
+                className={`toggle-icon ${activeTheme === "dark" ? "active" : ""}`}
                 onClick={() => setTheme("dark")}
-                aria-label="Dark mode"
+                aria-label="Темна тема"
+                aria-pressed={activeTheme === "dark"}
             >
-                <Moon size={24} weight="bold" />
+                <Moon size={20} weight="bold" aria-hidden="true" />
             </button>
         </div>
     );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { InputGroup } from "@/components/InputGroup";
 import { useRouter } from "next/navigation";
 import { WarningCircle, CheckCircle } from "@phosphor-icons/react";
+import { BackNavigation } from "@/components/BackNavigation";
 
 export default function NewPassword() {
     const router = useRouter();
@@ -122,157 +123,157 @@ export default function NewPassword() {
         <>
             <div className="form-content-wrapper">
                 <main className="main-content content-wide">
-                    <div className="login-container">
-                        <h1 className="headline">СТВОРІТЬ НОВИЙ ПАРОЛЬ</h1>
-                        <p className="subtitle">Введіть новий пароль і підтвердіть його</p>
+                    <div className="form-back-wrapper">
+                        <BackNavigation />
+                        <div className="login-container">
+                            <h1 className="headline">СТВОРІТЬ НОВИЙ ПАРОЛЬ</h1>
+                            <p className="subtitle">Введіть новий пароль і підтвердіть його</p>
 
-                        <InputGroup
-                            label="Новий пароль"
-                            type="password"
-                            name="newPassword"
-                            autoComplete="new-password"
-                            placeholder="Пароль"
-                            value={newPassword}
-                            onChange={handleNewPassChange}
-                            onBlur={() =>
-                                validateNewPasswords(newPassword, confirmPassword)
-                            }
-                            status={newPassStatus}
-                            message={newPassMsg}
-                            containerStyle={{ marginBottom: "8px" }}
-                        />
-
-                        {/* Password strength indicator — always visible when typing */}
-                        <div
-                            aria-label="Надійність пароля"
-                            aria-valuemax={requirements.length}
-                            aria-valuemin={0}
-                            aria-valuenow={strengthScore}
-                            role="progressbar"
-                            tabIndex={-1}
-                            className="strength-bar-track"
-                            style={{
-                                marginTop: "0px",
-                                height: "4px",
-                                width: "100%",
-                                overflow: "hidden",
-                                borderRadius: "9999px",
-                                backgroundColor: "var(--stroke-subtle)",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    height: "100%",
-                                    backgroundColor: newPassword
-                                        ? getStrengthColor(strengthScore)
-                                        : "transparent",
-                                    transition: "width 500ms ease-out, background-color 500ms ease-out",
-                                    width: `${(strengthScore / requirements.length) * 100}%`,
-                                }}
+                            <InputGroup
+                                label="Новий пароль"
+                                type="password"
+                                name="newPassword"
+                                autoComplete="new-password"
+                                placeholder="Пароль"
+                                value={newPassword}
+                                onChange={handleNewPassChange}
+                                onBlur={() =>
+                                    validateNewPasswords(newPassword, confirmPassword)
+                                }
+                                status={newPassStatus}
+                                message={newPassMsg}
+                                containerStyle={{ marginBottom: "8px" }}
                             />
-                        </div>
 
-                        {/* Smart contextual hint — shows only the first unmet requirement */}
-                        <div
-                            className="smart-hint-wrapper"
-                            style={{
-                                display: "grid",
-                                gridTemplateRows: showSmartHint ? "1fr" : "0fr",
-                                transition: "grid-template-rows 300ms ease-out",
-                            }}
-                        >
-                            <div style={{ overflow: "hidden" }}>
+                            {/* Password strength indicator — always visible when typing */}
+                            <div
+                                aria-label="Надійність пароля"
+                                aria-valuemax={requirements.length}
+                                aria-valuemin={0}
+                                aria-valuenow={strengthScore}
+                                role="progressbar"
+                                tabIndex={-1}
+                                className="strength-bar-track"
+                                style={{
+                                    marginTop: "0px",
+                                    height: "4px",
+                                    width: "100%",
+                                    overflow: "hidden",
+                                    borderRadius: "9999px",
+                                    backgroundColor: "var(--stroke-subtle)",
+                                }}
+                            >
                                 <div
-                                    className="smart-hint"
-                                    role="status"
-                                    aria-live="polite"
                                     style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "6px",
-                                        paddingTop: "10px",
-                                        paddingBottom: "4px",
-                                        fontSize: "13px",
-                                        color: "var(--destructive)",
-                                        fontWeight: 400,
+                                        height: "100%",
+                                        backgroundColor: newPassword
+                                            ? getStrengthColor(strengthScore)
+                                            : "transparent",
+                                        transition: "width 500ms ease-out, background-color 500ms ease-out",
+                                        width: `${(strengthScore / requirements.length) * 100}%`,
                                     }}
-                                >
-                                    <WarningCircle
-                                        aria-hidden="true"
-                                        size={16}
-                                        weight="bold"
-                                        style={{ flexShrink: 0 }}
-                                    />
-                                    <span>{firstUnmet?.hint}</span>
+                                />
+                            </div>
+
+                            {/* Smart contextual hint — shows only the first unmet requirement */}
+                            <div
+                                className="smart-hint-wrapper"
+                                style={{
+                                    display: "grid",
+                                    gridTemplateRows: showSmartHint ? "1fr" : "0fr",
+                                    transition: "grid-template-rows 300ms ease-out",
+                                }}
+                            >
+                                <div style={{ overflow: "hidden" }}>
+                                    <div
+                                        className="smart-hint"
+                                        role="status"
+                                        aria-live="polite"
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "6px",
+                                            paddingTop: "10px",
+                                            paddingBottom: "4px",
+                                            fontSize: "13px",
+                                            color: "var(--destructive)",
+                                            fontWeight: 400,
+                                        }}
+                                    >
+                                        <WarningCircle
+                                            aria-hidden="true"
+                                            size={16}
+                                            weight="bold"
+                                            style={{ flexShrink: 0 }}
+                                        />
+                                        <span>{firstUnmet?.hint}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Success feedback — shows when all requirements are met */}
-                        <div
-                            className="smart-hint-wrapper"
-                            style={{
-                                display: "grid",
-                                gridTemplateRows: showSuccessFeedback ? "1fr" : "0fr",
-                                transition: "grid-template-rows 300ms ease-out",
-                            }}
-                        >
-                            <div style={{ overflow: "hidden" }}>
-                                <div
-                                    role="status"
-                                    aria-live="polite"
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "6px",
-                                        paddingTop: "10px",
-                                        paddingBottom: "4px",
-                                        fontSize: "13px",
-                                        color: "var(--accent-success)",
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    <CheckCircle
-                                        aria-hidden="true"
-                                        size={16}
-                                        weight="bold"
-                                        style={{ flexShrink: 0 }}
-                                    />
-                                    <span>Надійний пароль</span>
+                            {/* Success feedback — shows when all requirements are met */}
+                            <div
+                                className="smart-hint-wrapper"
+                                style={{
+                                    display: "grid",
+                                    gridTemplateRows: showSuccessFeedback ? "1fr" : "0fr",
+                                    transition: "grid-template-rows 300ms ease-out",
+                                }}
+                            >
+                                <div style={{ overflow: "hidden" }}>
+                                    <div
+                                        role="status"
+                                        aria-live="polite"
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "6px",
+                                            paddingTop: "10px",
+                                            paddingBottom: "4px",
+                                            fontSize: "13px",
+                                            color: "var(--accent-success)",
+                                            fontWeight: 500,
+                                        }}
+                                    >
+                                        <CheckCircle
+                                            aria-hidden="true"
+                                            size={16}
+                                            weight="bold"
+                                            style={{ flexShrink: 0 }}
+                                        />
+                                        <span>Надійний пароль</span>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Spacer between strength section and confirm field */}
+                            <div style={{ height: (showSmartHint || showSuccessFeedback) ? "12px" : "20px", transition: "height 300ms ease-out" }} />
+
+                            <InputGroup
+                                label="Підтвердіть новий пароль"
+                                type="password"
+                                name="confirmPassword"
+                                autoComplete="new-password"
+                                placeholder="Пароль"
+                                value={confirmPassword}
+                                onChange={handleConfPassChange}
+                                onBlur={() =>
+                                    validateNewPasswords(newPassword, confirmPassword)
+                                }
+                                status={confPassStatus}
+                                message={confPassMsg}
+                            />
+
+                            <button
+                                className="btn-primary"
+                                onClick={handleSubmit}
+                                style={{ marginTop: 24 }}
+                            >
+                                Зберігти Пароль
+                            </button>
                         </div>
-
-                        {/* Spacer between strength section and confirm field */}
-                        <div style={{ height: (showSmartHint || showSuccessFeedback) ? "12px" : "20px", transition: "height 300ms ease-out" }} />
-
-                        <InputGroup
-                            label="Підтвердіть новий пароль"
-                            type="password"
-                            name="confirmPassword"
-                            autoComplete="new-password"
-                            placeholder="Пароль"
-                            value={confirmPassword}
-                            onChange={handleConfPassChange}
-                            onBlur={() =>
-                                validateNewPasswords(newPassword, confirmPassword)
-                            }
-                            status={confPassStatus}
-                            message={confPassMsg}
-                        />
-
-                        <button
-                            className="btn-primary"
-                            onClick={handleSubmit}
-                            style={{ marginTop: 24 }}
-                        >
-                            Зберігти Пароль
-                        </button>
                     </div>
 
-                    <p className="footer-text">
-                        Обмежений доступ. Тільки для команди СР КПІ
-                    </p>
                 </main>
             </div>
         </>
