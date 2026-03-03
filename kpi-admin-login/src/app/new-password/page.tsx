@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { InputGroup } from "@/components/InputGroup";
 import { useRouter } from "next/navigation";
 import { WarningCircle, CheckCircle } from "@phosphor-icons/react";
@@ -11,6 +11,8 @@ export default function NewPassword() {
 
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const newPassRef = useRef<HTMLInputElement>(null);
+    const confPassRef = useRef<HTMLInputElement>(null);
 
     const [newPassStatus, setNewPassStatus] = useState<"default" | "success" | "error">("default");
     const [newPassMsg, setNewPassMsg] = useState("");
@@ -94,22 +96,43 @@ export default function NewPassword() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        validateNewPasswords(newPassword, confirmPassword);
 
-        if (
-            newPassStatus === "error" ||
-            confPassStatus === "error" ||
-            newPassword === "" ||
-            confirmPassword === ""
-        ) {
-            if (newPassword === "") {
-                setNewPassStatus("error");
-                setNewPassMsg("Обов\u2019язкове поле");
-            }
-            if (confirmPassword === "") {
-                setConfPassStatus("error");
-                setConfPassMsg("Обов\u2019язкове поле");
-            }
+        const isNewEmpty = newPassword === "";
+        const isConfEmpty = confirmPassword === "";
+        const currentStrength = checkStrength(newPassword);
+        const score = currentStrength.filter((req) => req.met).length;
+        const isNewValid = !isNewEmpty && score === requirements.length;
+        const isConfValid = !isConfEmpty && confirmPassword === newPassword && isNewValid;
+
+        let hasError = false;
+        let firstErrorRef: React.RefObject<HTMLInputElement | null> | null = null;
+
+        if (isNewEmpty) {
+            setNewPassStatus("error");
+            setNewPassMsg("Обов\u2019язкове поле");
+            hasError = true;
+            if (!firstErrorRef) firstErrorRef = newPassRef;
+        } else if (!isNewValid) {
+            setNewPassStatus("error");
+            setNewPassMsg("");
+            hasError = true;
+            if (!firstErrorRef) firstErrorRef = newPassRef;
+        }
+
+        if (isConfEmpty) {
+            setConfPassStatus("error");
+            setConfPassMsg("Обов\u2019язкове поле");
+            hasError = true;
+            if (!firstErrorRef) firstErrorRef = confPassRef;
+        } else if (!isConfValid) {
+            setConfPassStatus("error");
+            setConfPassMsg("Паролі не співпадають");
+            hasError = true;
+            if (!firstErrorRef) firstErrorRef = confPassRef;
+        }
+
+        if (firstErrorRef) {
+            firstErrorRef.current?.focus();
         } else {
             router.push("/");
         }
@@ -130,11 +153,12 @@ export default function NewPassword() {
                             <p className="subtitle">Введіть новий пароль і підтвердіть його</p>
 
                             <InputGroup
+                                ref={newPassRef}
                                 label="Новий пароль"
                                 type="password"
                                 name="newPassword"
                                 autoComplete="new-password"
-                                placeholder="Пароль"
+                                placeholder="…"
                                 value={newPassword}
                                 onChange={handleNewPassChange}
                                 onBlur={() =>
@@ -250,11 +274,12 @@ export default function NewPassword() {
                             <div style={{ height: (showSmartHint || showSuccessFeedback) ? "12px" : "20px", transition: "height 300ms ease-out" }} />
 
                             <InputGroup
+                                ref={confPassRef}
                                 label="Підтвердіть новий пароль"
                                 type="password"
                                 name="confirmPassword"
                                 autoComplete="new-password"
-                                placeholder="Пароль"
+                                placeholder="…"
                                 value={confirmPassword}
                                 onChange={handleConfPassChange}
                                 onBlur={() =>
