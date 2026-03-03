@@ -1,10 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { BackNavigation } from "@/components/BackNavigation";
 
 export default function CheckEmail() {
-    const router = useRouter();
 
     return (
         <>
@@ -16,7 +15,7 @@ export default function CheckEmail() {
                             <h1 className="headline">ПЕРЕВІРТЕ СВОЮ ПОШТУ</h1>
                             <p className="subtitle email-sent">Лист з підтвердженням на зміну паролю було надіслано на вашу пошту <span className="email-highlight">yourexample@email.com</span></p>
 
-                            <button className="btn-primary" onClick={() => router.push('/new-password')}>Повернутися до авторизації</button>
+                            <Link href="/new-password" className="btn-primary">Повернутися до авторизації</Link>
                         </div>
                     </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { InputGroup } from "@/components/InputGroup";
 import { useRouter } from "next/navigation";
 import { BackNavigation } from "@/components/BackNavigation";
@@ -10,6 +10,7 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [emailStatus, setEmailStatus] = useState<"default" | "success" | "error">("default");
     const [emailMsg, setEmailMsg] = useState("");
+    const emailRef = useRef<HTMLInputElement>(null);
 
     const validateEmailFormat = (val: string) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,12 +35,18 @@ export default function ForgotPassword() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        validateEmail(email);
-        if (emailStatus === "error" || email.trim() === "") {
-            if (email.trim() === "") {
-                setEmailStatus("error");
-                setEmailMsg("Обов'язкове поле");
-            }
+
+        const isEmailEmpty = email.trim() === "";
+        const isEmailValid = !isEmailEmpty && validateEmailFormat(email);
+
+        if (isEmailEmpty) {
+            setEmailStatus("error");
+            setEmailMsg("Обов\u2019язкове поле");
+            emailRef.current?.focus();
+        } else if (!isEmailValid) {
+            setEmailStatus("error");
+            setEmailMsg("Недійсний email");
+            emailRef.current?.focus();
         } else {
             router.push("/check-email");
         }
@@ -56,10 +63,11 @@ export default function ForgotPassword() {
                             <p className="subtitle">Введіть електронну адресу, якщо вона правильна вам буде надіслано лист для відновленя паролю.</p>
 
                             <InputGroup
+                                ref={emailRef}
                                 label="Електронна пошта"
                                 type="email"
                                 name="email"
-                                placeholder="youremail@email.com"
+                                placeholder="youremail@email.com…"
                                 autoComplete="email"
                                 value={email}
                                 onChange={(e) => validateEmail(e.target.value)}

@@ -25,7 +25,7 @@ export function BackNavigation() {
 
     return (
         <Link href={backHref} className="btn-back">
-            <ArrowLeft size={24} weight="bold" />
+            <ArrowLeft size={24} weight="bold" aria-hidden="true" />
             Назад
         </Link>
     );

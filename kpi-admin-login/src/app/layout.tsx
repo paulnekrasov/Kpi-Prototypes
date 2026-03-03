@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { Header } from "@/components/Header";
 
 const onest = Onest({
   variable: "--font-onest",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   description: "Адмін панель СР КПІ. Авторизація.",
 };
 
-import { Header } from "@/components/Header";
+
 
 export default function RootLayout({
   children,
@@ -33,15 +34,16 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <Providers>
+          <a href="#main-content" className="skip-to-content">Перейти до контенту</a>
           <div className="layout-wrapper">
             <Header />
             <div className="layout-split">
               <div className="layout-illustration-side">
                 <div className="illustration-wrapper">
-                  <img src="/updated-animated-logo.svg" alt="Animated Logo" className="animated-logo" />
+                  <img src="/updated-animated-logo.svg" alt="Анімований логотип Студради КПІ" className="animated-logo" width={400} height={400} />
                 </div>
               </div>
-              <div className="layout-form-side">
+              <div className="layout-form-side" id="main-content">
                 {children}
               </div>
             </div>
