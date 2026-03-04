@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
+import "@styles/tokens.css";
 import "./globals.css";
-import { Providers } from "@/components/Providers";
-import { Header } from "@/components/Header";
+import { Providers } from "@components/providers/Providers";
+import { Header } from "@components/layout/Header";
 
 const onest = Onest({
   variable: "--font-onest",

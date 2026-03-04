@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { InputGroup } from "@/components/InputGroup";
+import { InputGroup } from "@components/ui/InputGroup";
 import { useRouter } from "next/navigation";
 import { WarningCircle, CheckCircle } from "@phosphor-icons/react";
-import { BackNavigation } from "@/components/BackNavigation";
+import { BackNavigation } from "@components/layout/BackNavigation";
 
 export default function NewPassword() {
     const router = useRouter();
