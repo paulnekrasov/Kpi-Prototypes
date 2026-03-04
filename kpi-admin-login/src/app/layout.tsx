@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Onest, Unbounded } from "next/font/google";
 import "@styles/tokens.css";
 import "./globals.css";
@@ -41,7 +42,7 @@ export default function RootLayout({
             <div className="layout-split">
               <div className="layout-illustration-side">
                 <div className="illustration-wrapper">
-                  <img src="/updated-animated-logo.svg" alt="Анімований логотип Студради КПІ" className="animated-logo" width={400} height={400} />
+                  <Image src="/updated-animated-logo.svg" alt="Анімований логотип Студради КПІ" className="animated-logo" width={400} height={400} priority unoptimized />
                 </div>
               </div>
               <div className="layout-form-side" id="main-content">

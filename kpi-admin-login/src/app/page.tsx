@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import React, { useState, useRef } from "react";
 import { InputGroup } from "@components/ui/InputGroup";
 
@@ -133,7 +134,7 @@ export default function Home() {
             </div>
 
             <button type="button" className="btn-outline">
-              <img src="/Google.svg" alt="" aria-hidden="true" width="20" height="20" />
+              <Image src="/Google.svg" alt="" aria-hidden="true" width={20} height={20} unoptimized />
               Увійти з Google
             </button>
           </form>
