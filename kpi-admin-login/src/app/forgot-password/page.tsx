@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { InputGroup } from "@/components/InputGroup";
+import { InputGroup } from "@components/ui/InputGroup";
 import { useRouter } from "next/navigation";
-import { BackNavigation } from "@/components/BackNavigation";
+import { BackNavigation } from "@components/layout/BackNavigation";
 
 export default function ForgotPassword() {
     const router = useRouter();

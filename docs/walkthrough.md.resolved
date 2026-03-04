@@ -1,0 +1,274 @@
+# CSS Extraction Walkthrough
+
+## What Changed
+
+### [NEW] [tokens.css](file:///d:/Paul/prototypes/styles/tokens.css)
+Shared design-system layer extracted from [globals.css](file:///d:/Paul/prototypes/kpi-admin-login/src/app/globals.css). Contains:
+- `:root` + `[data-theme="dark"]` CSS variables
+- `*` reset, `body` base, skip-to-content
+- Mode toggle (`.mode-toggle`, `.toggle-pill`, `.toggle-icon`)
+- Buttons (`.btn-outline`, `.btn-primary`, loading states)
+- Inputs (`.input-group`, `.input-wrapper`, validation states)
+- Spinner + `@keyframes rotation`
+- Divider, icon-btn, forgot-password link
+- All `prefers-reduced-motion` rules for shared elements
+
+### [MODIFY] [globals.css](file:///d:/Paul/prototypes/kpi-admin-login/src/app/globals.css)
+Slimmed from **~970 → ~470 lines**. Now contains only layout-specific classes:
+- `.layout-wrapper`, `.layout-split`, `.layout-form-side`, `.layout-illustration-side`
+- `.header`, `.logo`, `.btn-back`
+- `.main-content`, `.headline`, `.subtitle`, `.login-container`
+- `.footer-wrapper`, `.footer-text`
+- `.input-footer`, `.status-text` (layout wrappers)
+- All responsive `@media` breakpoints for the above
+
+### [MODIFY] [tsconfig.json](file:///d:/Paul/prototypes/kpi-admin-login/tsconfig.json)
+```diff:tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "../components/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../components/**/*.ts",
+    "../components/**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+===
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@components/*": [
+        "../components/*"
+      ],
+      "@styles/*": [
+        "../styles/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../components/**/*.ts",
+    "../components/**/*.tsx",
+    "../styles/**/*.css",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+```
+
+### [MODIFY] [layout.tsx](file:///d:/Paul/prototypes/kpi-admin-login/src/app/layout.tsx)
+```diff:layout.tsx
+import type { Metadata } from "next";
+import { Onest, Unbounded } from "next/font/google";
+import "./globals.css";
+import { Providers } from "@components/providers/Providers";
+import { Header } from "@components/layout/Header";
+
+const onest = Onest({
+  variable: "--font-onest",
+  subsets: ["latin", "cyrillic"],
+});
+
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin", "cyrillic"],
+});
+
+export const metadata: Metadata = {
+  title: "Панель СР КПІ",
+  description: "Адмін панель СР КПІ. Авторизація.",
+};
+
+
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="uk" className={`${onest.className} ${onest.variable} ${unbounded.variable}`} suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#05050f" media="(prefers-color-scheme: dark)" />
+      </head>
+      <body suppressHydrationWarning>
+        <Providers>
+          <a href="#main-content" className="skip-to-content">Перейти до контенту</a>
+          <div className="layout-wrapper">
+            <Header />
+            <div className="layout-split">
+              <div className="layout-illustration-side">
+                <div className="illustration-wrapper">
+                  <img src="/updated-animated-logo.svg" alt="Анімований логотип Студради КПІ" className="animated-logo" width={400} height={400} />
+                </div>
+              </div>
+              <div className="layout-form-side" id="main-content">
+                {children}
+              </div>
+            </div>
+            <div className="footer-wrapper">
+              <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
+            </div>
+          </div>
+        </Providers>
+      </body>
+    </html>
+  );
+}
+
+===
+import type { Metadata } from "next";
+import { Onest, Unbounded } from "next/font/google";
+import "@styles/tokens.css";
+import "./globals.css";
+import { Providers } from "@components/providers/Providers";
+import { Header } from "@components/layout/Header";
+
+const onest = Onest({
+  variable: "--font-onest",
+  subsets: ["latin", "cyrillic"],
+});
+
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin", "cyrillic"],
+});
+
+export const metadata: Metadata = {
+  title: "Панель СР КПІ",
+  description: "Адмін панель СР КПІ. Авторизація.",
+};
+
+
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="uk" className={`${onest.className} ${onest.variable} ${unbounded.variable}`} suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#f3f5fa" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#05050f" media="(prefers-color-scheme: dark)" />
+      </head>
+      <body suppressHydrationWarning>
+        <Providers>
+          <a href="#main-content" className="skip-to-content">Перейти до контенту</a>
+          <div className="layout-wrapper">
+            <Header />
+            <div className="layout-split">
+              <div className="layout-illustration-side">
+                <div className="illustration-wrapper">
+                  <img src="/updated-animated-logo.svg" alt="Анімований логотип Студради КПІ" className="animated-logo" width={400} height={400} />
+                </div>
+              </div>
+              <div className="layout-form-side" id="main-content">
+                {children}
+              </div>
+            </div>
+            <div className="footer-wrapper">
+              <p className="footer-text">Обмежений доступ. Тільки для команди СР КПІ</p>
+            </div>
+          </div>
+        </Providers>
+      </body>
+    </html>
+  );
+}
+
+```
+
+## Verification
+
+**Build**: `npm run build` → ✅ exit code 0, all 4 routes compiled:
+- `○ /`
+- `○ /check-email`
+- `○ /forgot-password`
+- `○ /new-password`
+
+## How to Use in New Prototypes
+
+Any new prototype (e.g., `admin-panel`) can now import the full design system:
+
+```tsx
+// in layout.tsx
+import "@styles/tokens.css";
+```
+
+With the same [tsconfig.json](file:///d:/Paul/prototypes/kpi-admin-login/tsconfig.json) path alias:
+```json
+"@styles/*": ["../styles/*"]
+```

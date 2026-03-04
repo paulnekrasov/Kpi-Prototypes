@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BackNavigation } from "@/components/BackNavigation";
+import { BackNavigation } from "@components/layout/BackNavigation";
 
 export default function CheckEmail() {
 
