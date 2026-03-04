@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
       "node_modules",
       ...(config.resolve.modules || []),
     ];
+    config.resolve.symlinks = false;
     return config;
   },
 };
