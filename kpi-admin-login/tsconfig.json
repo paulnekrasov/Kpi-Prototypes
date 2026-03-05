@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
     "lib": [
       "dom",
       "dom.iterable",
@@ -20,7 +17,6 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "preserveSymlinks": true,
     "plugins": [
       {
         "name": "next"
@@ -54,6 +50,9 @@
       ],
       "next/*": [
         "./node_modules/next/*"
+      ],
+      "next-themes": [
+        "./node_modules/next-themes"
       ],
       "@phosphor-icons/react": [
         "./node_modules/@phosphor-icons/react"
