@@ -61,7 +61,7 @@ export default function NewPassword() {
                 isNewPassValid = true;
             } else {
                 setNewPassStatus("error");
-                setNewPassMsg(firstUnmet?.hint || "Пароль не відповідає всім вимогам");
+                setNewPassMsg("");
             }
         } else {
             setNewPassStatus("default");
@@ -112,7 +112,7 @@ export default function NewPassword() {
             if (!firstErrorRef) firstErrorRef = newPassRef;
         } else if (!isNewValid) {
             setNewPassStatus("error");
-            setNewPassMsg(firstUnmet?.hint || "Пароль не відповідає всім вимогам");
+            setNewPassMsg("");
             if (!firstErrorRef) firstErrorRef = newPassRef;
         }
 
