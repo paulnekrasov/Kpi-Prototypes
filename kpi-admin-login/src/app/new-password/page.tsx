@@ -61,7 +61,7 @@ export default function NewPassword() {
                 isNewPassValid = true;
             } else {
                 setNewPassStatus("error");
-                setNewPassMsg("");
+                setNewPassMsg(firstUnmet?.hint || "Пароль не відповідає всім вимогам");
             }
         } else {
             setNewPassStatus("default");
@@ -104,30 +104,25 @@ export default function NewPassword() {
         const isNewValid = !isNewEmpty && score === requirements.length;
         const isConfValid = !isConfEmpty && confirmPassword === newPassword && isNewValid;
 
-        let hasError = false;
         let firstErrorRef: React.RefObject<HTMLInputElement | null> | null = null;
 
         if (isNewEmpty) {
             setNewPassStatus("error");
             setNewPassMsg("Обов\u2019язкове поле");
-            hasError = true;
             if (!firstErrorRef) firstErrorRef = newPassRef;
         } else if (!isNewValid) {
             setNewPassStatus("error");
-            setNewPassMsg("");
-            hasError = true;
+            setNewPassMsg(firstUnmet?.hint || "Пароль не відповідає всім вимогам");
             if (!firstErrorRef) firstErrorRef = newPassRef;
         }
 
         if (isConfEmpty) {
             setConfPassStatus("error");
             setConfPassMsg("Обов\u2019язкове поле");
-            hasError = true;
             if (!firstErrorRef) firstErrorRef = confPassRef;
         } else if (!isConfValid) {
             setConfPassStatus("error");
             setConfPassMsg("Паролі не співпадають");
-            hasError = true;
             if (!firstErrorRef) firstErrorRef = confPassRef;
         }
 
