@@ -1,0 +1,4 @@
+interface:
+  display_name: "FigJam Normalizer"
+  short_description: "Normalize FigJam flows into structured markdown docs"
+  default_prompt: "Use $figmajam-normalizer to document this FigJam flow into a faithful normalized Markdown file."

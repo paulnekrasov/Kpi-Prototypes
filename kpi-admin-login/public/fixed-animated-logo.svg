@@ -127,34 +127,48 @@
   <g class="logo-container" filter="url(#glass-shadow)">
     
     <g id="leftPiece">
+      <!-- Added matching stroke to prevent aliasing seams -->
       <path d="M 390,100 A 300,300 0 0,0 390,700 L 340,640 A 240,240 0 0,1 340,160 Z" 
-            fill="url(#left-bevel-grad)" />
+            fill="url(#left-bevel-grad)" 
+            stroke="url(#left-bevel-grad)" stroke-width="1.5" stroke-linejoin="round" />
       
       <path d="M 390,100 L 340,160 L 340,640 L 390,700 Z" 
-            fill="url(#left-cut-grad)" />
+            fill="url(#left-cut-grad)" 
+            stroke="url(#left-cut-grad)" stroke-width="1.5" stroke-linejoin="round" />
       
       <path d="M 340,160 A 240,240 0 0,0 340,640 Z" 
-            fill="url(#left-front-grad)" />
+            fill="url(#left-front-grad)" 
+            stroke="url(#left-front-grad)" stroke-width="1.5" stroke-linejoin="round" />
 
+      <!-- Outer sharp highlight border now slightly shifted and crisp -->
       <path d="M 340,160 A 240,240 0 0,0 340,640 Z" 
-            fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
-      <path d="M 390,100 A 300,300 0 0,0 120,270" 
+            fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+            
+      <!-- Corrected specular glow edge along exact circle circumference -->
+      <path d="M 390,100 A 300,300 0 0,0 130,250" 
             fill="none" stroke="#ffffff" stroke-width="3" filter="url(#specular-glow)" opacity="0.8" stroke-linecap="round"/>
     </g>
 
     <g id="rightPiece">
+      <!-- Added matching stroke to prevent aliasing seams -->
       <path d="M 410,200 A 200,200 0 0,1 410,600 L 460,540 A 140,140 0 0,0 460,260 Z" 
-            fill="url(#right-bevel-grad)" />
+            fill="url(#right-bevel-grad)" 
+            stroke="url(#right-bevel-grad)" stroke-width="1.5" stroke-linejoin="round" />
       
       <path d="M 410,200 L 460,260 L 460,540 L 410,600 Z" 
-            fill="url(#right-cut-grad)" />
+            fill="url(#right-cut-grad)" 
+            stroke="url(#right-cut-grad)" stroke-width="1.5" stroke-linejoin="round" />
       
       <path d="M 460,260 A 140,140 0 0,1 460,540 Z" 
-            fill="url(#right-front-grad)" />
+            fill="url(#right-front-grad)" 
+            stroke="url(#right-front-grad)" stroke-width="1.5" stroke-linejoin="round" />
 
+      <!-- Outer sharp highlight border -->
       <path d="M 460,260 A 140,140 0 0,1 460,540 Z" 
-            fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" />
-      <path d="M 410,200 A 200,200 0 0,1 590,320" 
+            fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />
+            
+      <!-- Corrected specular glow edge along exact circle circumference -->
+      <path d="M 410,200 A 200,200 0 0,1 583.2,300" 
             fill="none" stroke="#ffffff" stroke-width="2.5" filter="url(#specular-glow)" opacity="0.7" stroke-linecap="round"/>
     </g>
 
