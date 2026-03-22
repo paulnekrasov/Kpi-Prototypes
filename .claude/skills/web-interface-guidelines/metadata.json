@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "organization": "Vercel Labs",
+  "date": "February 2026",
+  "abstract": "Guidelines for building interfaces on the Web. Covers interactions, typography, forms, animation, performance, layout, content accessibility, and design heuristics.",
+  "references": [
+    "https://github.com/vercel-labs/web-interface-guidelines",
+    "https://vercel.com/design/guidelines",
+    "https://www.w3.org/WAI/ARIA/apg/patterns/"
+  ]
+}
