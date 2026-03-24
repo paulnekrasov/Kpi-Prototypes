@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react"
 
 function cn(...classes: (string | undefined | null | false)[]) {
@@ -69,9 +67,9 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
-      data-slot="table-head"
-      className={cn(
-        "h-10 px-3 text-left align-middle font-medium text-(--text-muted) whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        data-slot="table-head"
+        className={cn(
+        "h-10 px-3 text-left align-middle font-medium text-(--text-muted) break-words [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
@@ -82,9 +80,9 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
-      data-slot="table-cell"
-      className={cn(
-        "px-3 py-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0",
+        data-slot="table-cell"
+        className={cn(
+        "px-3 py-2 align-middle break-words [&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}

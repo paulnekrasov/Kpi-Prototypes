@@ -27,16 +27,29 @@ export const InputGroup = forwardRef<HTMLInputElement, InputProps>(
         const defaultId = useId();
         const elementId = props.id || defaultId;
         const statusId = `${elementId}-status`;
+        const hintId = `${elementId}-hint`;
         const [showPassword, setShowPassword] = useState(false);
         const isPassword = props.type === "password";
         const shouldDisableSpellcheck = props.type === "email" || props.type === "password";
+        const passwordToggleLabel = showPassword ? "Приховати пароль" : "Показати пароль";
 
         const inputType = isPassword && showPassword ? "text" : props.type;
+        const describedBy = [
+            props["aria-describedby"],
+            hint ? hintId : undefined,
+            message && status !== "default" ? statusId : undefined,
+        ].filter(Boolean).join(" ") || undefined;
 
         return (
             <div className={`input-group ${containerClassName || ""}`} style={containerStyle}>
                 <label htmlFor={elementId}>
                     {label}
+                    {requiredAsterisk && props.required ? (
+                        <span
+                            aria-hidden="true"
+                            style={status === "success" ? { color: "var(--color-success)" } : undefined}
+                        > *</span>
+                    ) : null}
                 </label>
                 <div className="input-wrapper">
                     <input
@@ -45,7 +58,7 @@ export const InputGroup = forwardRef<HTMLInputElement, InputProps>(
                         {...props}
                         type={inputType}
                         spellCheck={shouldDisableSpellcheck ? false : undefined}
-                        aria-describedby={message ? statusId : undefined}
+                        aria-describedby={describedBy}
                         className={`${props.className || ""} ${status === "success" ? "input-success" : status === "error" ? "input-error" : ""
                             }`}
                     />
@@ -53,14 +66,23 @@ export const InputGroup = forwardRef<HTMLInputElement, InputProps>(
                         <button
                             type="button"
                             className="icon-btn"
-                            aria-label="Показати/приховати пароль"
+                            aria-label={passwordToggleLabel}
+                            aria-pressed={showPassword}
+                            title={passwordToggleLabel}
                             onClick={() => setShowPassword(!showPassword)}
                         >
-                            {showPassword ? (
-                                <EyeSlash size={20} weight="bold" />
-                            ) : (
-                                <Eye size={20} weight="bold" />
-                            )}
+                            <span className="icon-btn-icons" aria-hidden="true">
+                                <Eye
+                                    size={20}
+                                    weight="bold"
+                                    className={showPassword ? "icon-hidden" : "icon-visible"}
+                                />
+                                <EyeSlash
+                                    size={20}
+                                    weight="bold"
+                                    className={showPassword ? "icon-visible" : "icon-hidden"}
+                                />
+                            </span>
                         </button>
                     )}
                 </div>
@@ -79,7 +101,7 @@ export const InputGroup = forwardRef<HTMLInputElement, InputProps>(
                             </div>
                         )}
                     </div>
-                    {hint && <div className="input-hint">{hint}</div>}
+                    {hint && <div className="input-hint" id={hintId}>{hint}</div>}
                 </div>
             </div>
         );

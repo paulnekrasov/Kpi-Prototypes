@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Skill(gsd:debug)"
+      "Skill(gsd:debug)",
+      "mcp__figma-console__figma_get_component_for_development"
     ]
   }
 }

@@ -125,7 +125,7 @@ export default function Home() {
               hint={<Link href="/forgot-password" className="forgot-password">Забули Пароль?</Link>}
             />
 
-            <button type="submit" className="btn-primary">Увійти у панель</button>
+            <button type="submit" className="btn-primary btn-full" style={{ marginTop: 16 }}>Увійти у панель</button>
 
             <div className="divider">
               <span className="line"></span>
@@ -133,7 +133,7 @@ export default function Home() {
               <span className="line"></span>
             </div>
 
-            <button type="button" className="btn-outline">
+            <button type="button" className="btn-secondary btn-full">
               <Image src="/Google.svg" alt="" aria-hidden="true" width={20} height={20} unoptimized />
               Увійти з Google
             </button>

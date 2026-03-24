@@ -1,0 +1,53 @@
+{
+  "extends": "./kpi-admin-login/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./kpi-admin-login/src/*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@styles/*": [
+        "./styles/*"
+      ],
+      "react": [
+        "./kpi-admin-login/node_modules/@types/react"
+      ],
+      "react/jsx-runtime": [
+        "./kpi-admin-login/node_modules/@types/react/jsx-runtime"
+      ],
+      "react-dom": [
+        "./kpi-admin-login/node_modules/@types/react-dom"
+      ],
+      "react-dom/client": [
+        "./kpi-admin-login/node_modules/@types/react-dom"
+      ],
+      "next": [
+        "./kpi-admin-login/node_modules/next"
+      ],
+      "next/*": [
+        "./kpi-admin-login/node_modules/next/*"
+      ],
+      "next-themes": [
+        "./kpi-admin-login/node_modules/next-themes"
+      ],
+      "@phosphor-icons/react": [
+        "./kpi-admin-login/node_modules/@phosphor-icons/react"
+      ]
+    }
+  },
+  "include": [
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "styles/**/*.css",
+    "kpi-admin-login/src/**/*.ts",
+    "kpi-admin-login/src/**/*.tsx",
+    "kpi-admin-login/next-env.d.ts"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/.next"
+  ]
+}

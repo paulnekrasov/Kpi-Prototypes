@@ -43,10 +43,10 @@ export default function NewPassword() {
 
     const getStrengthColor = (score: number) => {
         if (score === 0) return "transparent";
-        if (score <= 1) return "var(--destructive)";
-        if (score <= 2) return "#f97316";
-        if (score === 3) return "#eab308";
-        return "var(--accent-success)";
+        if (score <= 1) return "var(--color-destructive)";
+        if (score <= 2) return "var(--color-warning)";
+        if (score === 3) return "var(--color-info)";
+        return "var(--color-success)";
     };
 
     const validateNewPasswords = (newVal: string, confVal: string) => {
@@ -179,17 +179,17 @@ export default function NewPassword() {
                                     width: "100%",
                                     overflow: "hidden",
                                     borderRadius: "9999px",
-                                    backgroundColor: "var(--stroke-subtle)",
+                                    backgroundColor: "var(--border-subtle)",
                                 }}
                             >
                                 <div
                                     style={{
                                         height: "100%",
-                                        backgroundColor: newPassword
-                                            ? getStrengthColor(strengthScore)
-                                            : "transparent",
-                                        transition: "width 500ms ease-out, background-color 500ms ease-out",
-                                        width: `${(strengthScore / requirements.length) * 100}%`,
+                                        width: "100%",
+                                        backgroundColor: getStrengthColor(strengthScore),
+                                        transition: "transform 200ms ease-out, background-color 200ms ease-out",
+                                        transform: `scaleX(${strengthScore / requirements.length})`,
+                                        transformOrigin: "left",
                                     }}
                                 />
                             </div>
@@ -215,7 +215,7 @@ export default function NewPassword() {
                                             paddingTop: "10px",
                                             paddingBottom: "4px",
                                             fontSize: "13px",
-                                            color: "var(--destructive)",
+                                            color: "var(--color-destructive)",
                                             fontWeight: 400,
                                         }}
                                     >
@@ -250,7 +250,7 @@ export default function NewPassword() {
                                             paddingTop: "10px",
                                             paddingBottom: "4px",
                                             fontSize: "13px",
-                                            color: "var(--accent-success)",
+                                            color: "var(--color-success)",
                                             fontWeight: 500,
                                         }}
                                     >

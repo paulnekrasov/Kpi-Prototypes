@@ -51,7 +51,7 @@ export default function TableDemo() {
         <Table.Header>
           <Table.Row>
             <Table.Head>#</Table.Head>
-            <Table.Head>Ім'я</Table.Head>
+            <Table.Head>Ім&#39;я</Table.Head>
             <Table.Head>Роль</Table.Head>
             <Table.Head>Відділ</Table.Head>
             <Table.Head>Статус</Table.Head>
