@@ -1,12 +1,33 @@
-import React from "react";
+import { useId } from "react";
 
 interface LogoProps {
     className?: string;
     width?: number;
     height?: number;
+    variant?: "full" | "icon";
 }
 
-export function Logo({ className, width = 180, height = 54 }: LogoProps) {
+export function Logo({ className, width = 180, height = 54, variant = "full" }: LogoProps) {
+    const titleId = useId();
+
+    if (variant === "icon") {
+        return (
+            <svg
+                width={width === 180 ? 24 : width}
+                height={height === 54 ? 24 : height}
+                viewBox="0 0 55 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                className={className}
+                focusable="false"
+            >
+                <path d="M29.799 0C21.8236 0.208669 14.2462 3.46106 8.68045 9.06464C3.11466 14.6682 0.000126602 22.1803 0 30.0014C0.000868234 37.822 3.11573 45.3334 8.68144 50.9364C14.2471 56.5394 21.8241 59.7913 29.799 60V30V0Z" fill="var(--color-brand)" />
+                <path d="M34.3526 47.9523C39.2661 47.8236 43.9343 45.8197 47.3631 42.3673C50.7919 38.9149 52.7105 34.2867 52.7102 29.4683C52.7105 24.6498 50.7919 20.0217 47.3631 16.5692C43.9343 13.1168 39.2661 11.1129 34.3526 10.9842V29.4683V47.9523Z" fill="var(--color-brand)" />
+            </svg>
+        );
+    }
+
     return (
         <svg
             width={width}
@@ -15,11 +36,11 @@ export function Logo({ className, width = 180, height = 54 }: LogoProps) {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             role="img"
-            aria-labelledby="logo-title"
+            aria-labelledby={titleId}
             className={className}
             focusable="false"
         >
-            <title id="logo-title">Студрада КПІ</title>
+            <title id={titleId}>Студрада КПІ</title>
             {/* Text — "СТУДРАДА" (top row) */}
             <path d="M75.9121 29.7531C73.1677 29.7531 71.1458 29.1817 69.8464 28.0389C68.547 26.8961 67.8974 25.2652 67.8974 23.1462C67.8974 21.0154 68.547 19.3309 69.8464 18.0929C71.1458 16.8549 73.1677 16.2358 75.9121 16.2358C79.7494 16.2358 82.3178 17.5275 83.6171 20.1107C82.5242 20.4797 81.2431 21.0332 79.7737 21.7713C79.4216 21.1047 78.863 20.6106 78.0979 20.2892C77.345 19.9678 76.5739 19.8071 75.7846 19.8071C74.6188 19.8071 73.7505 20.1107 73.1798 20.7178C72.609 21.313 72.3237 22.0511 72.3237 22.932C72.3237 23.8843 72.6273 24.664 73.2344 25.2711C73.8538 25.8664 74.7949 26.164 76.0578 26.164C77.0657 26.164 77.8672 26.0033 78.4622 25.6818C79.0572 25.3485 79.4944 24.8247 79.7737 24.1105C80.7695 24.6343 82.0446 25.2235 83.5989 25.8783C82.9918 27.3187 81.9778 28.3246 80.557 28.896C79.1362 29.4674 77.5879 29.7531 75.9121 29.7531Z" fill="currentColor" />
             <path d="M100.728 20.3607C98.8213 20.3011 96.9694 20.2654 95.1722 20.2535V29.5745H90.6183V20.2535C88.8089 20.2654 86.9631 20.3011 85.0809 20.3607V16.6108H100.728V20.3607Z" fill="currentColor" />

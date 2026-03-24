@@ -272,50 +272,6 @@
   border-color: var(--border-subtle);
 }
 
-/* ── Input Footer (layout-specific wrappers) ── */
-
-.input-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  min-height: 0;
-  align-self: stretch;
-}
-
-.input-status-area {
-  flex: 1;
-  min-width: 0;
-}
-
-.input-hint {
-  flex-shrink: 0;
-  margin-left: auto;
-  padding-right: 16px;
-}
-
-.status-text {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 14px;
-  padding-left: 8px;
-  text-wrap: balance;
-}
-
-.status-text.success {
-  color: var(--color-success);
-}
-
-.status-text.error {
-  color: var(--color-destructive);
-}
-
-.status-text svg {
-  width: 16px;
-  height: 16px;
-}
-
 /* ── Footer ── */
 
 .footer-wrapper {
@@ -392,7 +348,7 @@
     max-width: 520px;
   }
 
-  .btn-outline,
+  .btn-secondary,
   .btn-primary {
     font-size: 16px;
   }
@@ -478,7 +434,7 @@
     max-width: 100%;
   }
 
-  .btn-outline,
+  .btn-secondary,
   .btn-primary {
     min-height: 44px;
     font-size: 14px;
@@ -488,7 +444,7 @@
   .input-wrapper input {
     min-height: 44px;
     font-size: 14px;
-    padding: 10px 12px;
+    padding: 10px;
   }
 
   .input-group {

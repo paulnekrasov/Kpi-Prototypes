@@ -1,6 +1,3 @@
-"use client";
-
-import React from "react";
 import { ThemeToggle } from "../providers/ThemeToggle";
 import { Logo } from "./Logo";
 

@@ -64,6 +64,7 @@ function PaginationPrev({ className }: { className?: string }) {
 
   return (
     <button
+      type="button"
       data-slot="pagination-prev"
       onClick={() => onPageChange(currentPage - 1)}
       disabled={disabled}
@@ -85,6 +86,7 @@ function PaginationNext({ className }: { className?: string }) {
 
   return (
     <button
+      type="button"
       data-slot="pagination-next"
       onClick={() => onPageChange(currentPage + 1)}
       disabled={disabled}
@@ -138,6 +140,7 @@ function PaginationPages({ className }: { className?: string }) {
         ) : (
           <button
             key={page}
+            type="button"
             data-slot="pagination-page"
             onClick={() => onPageChange(page)}
             aria-label={`Page ${page}`}
