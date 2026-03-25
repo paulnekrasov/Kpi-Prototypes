@@ -11,7 +11,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
-  const isDashboardRoute = pathname.startsWith("/roles");
+  const isDashboardRoute = pathname.startsWith("/admin-panel");
 
   if (isDashboardRoute) {
     return <DashboardShell>{children}</DashboardShell>;

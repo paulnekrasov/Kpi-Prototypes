@@ -1,10 +1,7 @@
 "use client";
 
 import * as React from "react";
-
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import { cn } from "@components/utils/cn";
 
 interface TabsContextValue {
   value: string;
@@ -125,4 +122,5 @@ export const Tabs = Object.assign(TabsRoot, {
   List: TabsList,
   Trigger: TabsTrigger,
   Panel: TabsPanel,
+  Content: TabsPanel,
 });

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { CaretUpDown, Sidebar as SidebarIcon } from "@phosphor-icons/react"
 import { Logo } from "@components/layout/Logo"
+import { cn } from "@components/utils/cn"
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -35,7 +36,7 @@ function SidebarRoot({
   defaultCollapsed = false,
   collapsed: controlledCollapsed,
   onCollapse,
-  className = "",
+  className,
 }: SidebarProps) {
   const [uncontrolled, setUncontrolled] = React.useState(defaultCollapsed)
   const isControlled = controlledCollapsed !== undefined
@@ -54,11 +55,31 @@ function SidebarRoot({
       <aside
         data-slot="sidebar"
         data-collapsed={collapsed}
-        className={["sidebar", collapsed && "collapsed", className].filter(Boolean).join(" ")}
+        className={cn("sidebar", collapsed && "collapsed", className)}
       >
         {children}
       </aside>
     </SidebarContext.Provider>
+  )
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+// Wraps Header + Nav to push Footer to the bottom via flex: 1.
+// Provides the 24px gap between header and nav per Figma spec.
+
+interface SidebarContentProps {
+  children: React.ReactNode
+  className?: string
+}
+
+function SidebarContent({ children, className }: SidebarContentProps) {
+  return (
+    <div
+      data-slot="sidebar-upper"
+      className={cn("sidebar-upper", className)}
+    >
+      {children}
+    </div>
   )
 }
 
@@ -75,23 +96,34 @@ function SidebarHeader({
   logo,
   teamName = "Media Team",
   onTeamClick,
-  className = "",
+  className,
 }: SidebarHeaderProps) {
   const { collapsed, setCollapsed } = useSidebar()
 
   return (
     <div
       data-slot="sidebar-header"
-      className={["sidebar-header", className].filter(Boolean).join(" ")}
+      className={cn("sidebar-header", className)}
     >
       <div className="sidebar-header-content">
-        <span aria-hidden="true">{logo ?? <Logo variant="icon" />}</span>
+        {collapsed ? (
+          <button
+            type="button"
+            className="sidebar-header-logo-btn"
+            onClick={() => setCollapsed(false)}
+            aria-label="Expand sidebar"
+          >
+            {logo ?? <Logo variant="icon" />}
+          </button>
+        ) : (
+          <span aria-hidden="true">{logo ?? <Logo variant="icon" />}</span>
+        )}
         {!collapsed && (
           <button
             type="button"
             className="sidebar-header-team"
             onClick={onTeamClick}
-            aria-label={`Switch team — current: ${teamName}`}
+            aria-label={`Switch team \u2014 current: ${teamName}`}
           >
             <span className="sidebar-header-team-name">{teamName}</span>
             <CaretUpDown size={16} aria-hidden="true" />
@@ -118,12 +150,12 @@ interface SidebarNavProps {
   className?: string
 }
 
-function SidebarNav({ children, className = "" }: SidebarNavProps) {
+function SidebarNav({ children, className }: SidebarNavProps) {
   return (
     <nav
       data-slot="sidebar-nav"
       aria-label="Main navigation"
-      className={["sidebar-nav", className].filter(Boolean).join(" ")}
+      className={cn("sidebar-nav", className)}
     >
       {children}
     </nav>
@@ -131,6 +163,13 @@ function SidebarNav({ children, className = "" }: SidebarNavProps) {
 }
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
+
+// Avatar initials from a name string
+function getInitials(name: string): string {
+  const parts = name.trim().split(/\s+/)
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
+  return name.slice(0, 2).toUpperCase()
+}
 
 interface SidebarFooterProps {
   avatarSrc?: string
@@ -147,22 +186,26 @@ function SidebarFooter({
   userName = "Paul Nekrasov",
   userRole = "Admin",
   onUserClick,
-  className = "",
+  className,
 }: SidebarFooterProps) {
   const { collapsed } = useSidebar()
 
   return (
     <div
       data-slot="sidebar-footer"
-      className={["sidebar-footer", className].filter(Boolean).join(" ")}
+      className={cn("sidebar-footer", className)}
     >
       <div className="sidebar-footer-content">
-        {avatarSrc && (
+        {avatarSrc ? (
           <img
             src={avatarSrc}
             alt={avatarAlt ?? userName}
             className="sidebar-footer-avatar"
           />
+        ) : (
+          <span className="sidebar-footer-initials" aria-hidden="true">
+            {getInitials(userName)}
+          </span>
         )}
         {!collapsed && (
           <div className="sidebar-footer-text">
@@ -188,6 +231,7 @@ function SidebarFooter({
 // ─── Compound export ──────────────────────────────────────────────────────────
 
 export const Sidebar = Object.assign(SidebarRoot, {
+  Content: SidebarContent,
   Header: SidebarHeader,
   Nav: SidebarNav,
   Footer: SidebarFooter,

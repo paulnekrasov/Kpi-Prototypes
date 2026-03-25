@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
 import "@styles/tokens.css";
@@ -48,7 +49,9 @@ export default function RootLayout({
           <a href="#main-content" className="skip-to-content">
             Перейти до контенту
           </a>
-          <AppShell>{children}</AppShell>
+          <Suspense>
+            <AppShell>{children}</AppShell>
+          </Suspense>
         </Providers>
       </body>
     </html>

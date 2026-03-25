@@ -2,10 +2,7 @@
 
 import React from "react"
 import { CaretLeft, CaretRight, DotsThree } from "@phosphor-icons/react"
-
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(" ")
-}
+import { cn } from "@components/utils/cn"
 
 // ─── Context ──────────────────────────────────────────────────────
 

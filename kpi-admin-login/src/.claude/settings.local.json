@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Asus/OneDrive/Desktop/prototypes/components/ui/**)",
+      "Read(//c/Users/Asus/OneDrive/Desktop/prototypes/components/layout/**)",
+      "Read(//c/Users/Asus/OneDrive/Desktop/prototypes/kpi-admin-login/**)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

@@ -18,6 +18,8 @@ interface DashboardShellProps {
   children: React.ReactNode;
 }
 
+const ROLES_PATH = "/admin-panel/owner-admin-moderator";
+
 function setSearchParam(
   pathname: string,
   searchParams: URLSearchParams,
@@ -38,8 +40,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const activeTab = searchParams.get("tab") === "suggestions" ? "suggestions" : "members";
 
   const navigateToRolesTab = (tab: "members" | "suggestions") => {
-    if (pathname !== "/roles") {
-      router.push(`/roles?tab=${tab}`);
+    if (pathname !== ROLES_PATH) {
+      router.push(`${ROLES_PATH}?tab=${tab}`);
       return;
     }
 
@@ -56,7 +58,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       <div className="flex min-h-screen flex-col lg:flex-row">
         <div className="hidden border-r border-(--border-subtle-plus) lg:flex">
           <Sidebar defaultCollapsed={false}>
-            <div className="sidebar-upper">
+            <Sidebar.Content>
               <Sidebar.Header teamName="KPI Admin" />
               <Sidebar.Nav>
                 <SidebarTab
@@ -66,13 +68,13 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   label="Home"
                 />
                 <SidebarTab
-                  active={pathname === "/roles" && activeTab === "members"}
+                  active={pathname === ROLES_PATH && activeTab === "members"}
                   icon={<ShieldCheck size={16} weight="bold" />}
                   label="Roles"
                   onClick={() => navigateToRolesTab("members")}
                 />
                 <SidebarTab
-                  active={pathname === "/roles" && activeTab === "suggestions"}
+                  active={pathname === ROLES_PATH && activeTab === "suggestions"}
                   icon={<ChatCircleDots size={16} weight="bold" />}
                   label="Suggestions"
                   onClick={() => navigateToRolesTab("suggestions")}
@@ -84,7 +86,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   label="Analytics"
                 />
               </Sidebar.Nav>
-            </div>
+            </Sidebar.Content>
             <Sidebar.Footer
               userName="Paul Nekrasov"
               userRole="Owner controls"

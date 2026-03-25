@@ -130,7 +130,8 @@ export const INITIAL_SUGGESTIONS: Suggestion[] = [
     memberId: "M-004",
     memberName: "Lina Petrenko",
     title: "Remove duplicate media seat",
-    description: "Delete Lina Petrenko from the Media roster after the merged publication workflow ships.",
+    description:
+      "Delete Lina Petrenko from the Media roster after the merged publication workflow ships.",
     department: "Media",
     status: "New",
     createdAt: "2024-12-01T09:20:00.000Z",
@@ -142,7 +143,8 @@ export const INITIAL_SUGGESTIONS: Suggestion[] = [
     memberId: "M-008",
     memberName: "Bohdan Sydorenko",
     title: "Expand moderator coverage",
-    description: "Update Bohdan Sydorenko with broader moderator permissions during the winter campaign.",
+    description:
+      "Update Bohdan Sydorenko with broader moderator permissions during the winter campaign.",
     department: "Media",
     status: "In Review",
     createdAt: "2024-12-02T12:05:00.000Z",
@@ -153,7 +155,8 @@ export const INITIAL_SUGGESTIONS: Suggestion[] = [
     type: "Create",
     memberName: "Backup owner seat",
     title: "Create backup owner seat",
-    description: "Add an emergency owner account for leadership continuity on release nights.",
+    description:
+      "Add an emergency owner account for leadership continuity on release nights.",
     department: "Leadership",
     status: "New",
     createdAt: "2024-12-03T08:40:00.000Z",
@@ -165,7 +168,8 @@ export const INITIAL_SUGGESTIONS: Suggestion[] = [
     memberId: "M-006",
     memberName: "Oleksii Romanov",
     title: "Archive old operations access",
-    description: "Remove unused moderator access from the previous operations onboarding track.",
+    description:
+      "Remove unused moderator access from the previous operations onboarding track.",
     department: "Operations",
     status: "Approved",
     createdAt: "2024-12-04T15:18:00.000Z",
