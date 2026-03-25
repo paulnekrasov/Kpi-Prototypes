@@ -1,17 +1,9 @@
 "use client";
 
 import React, { startTransition } from "react";
-import {
-  ChartBar,
-  ChatCircleDots,
-  HouseLine,
-  ShieldCheck,
-  Sparkle,
-} from "@phosphor-icons/react";
+import { ShieldCheck } from "@phosphor-icons/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Sidebar } from "@components/layout/sidebar";
-import { ThemeToggle } from "@components/providers/ThemeToggle";
-import { Badge } from "@components/ui/Badge";
 import { SidebarTab } from "@components/ui/sidebar-tab";
 
 interface DashboardShellProps {
@@ -19,6 +11,8 @@ interface DashboardShellProps {
 }
 
 const ROLES_PATH = "/admin-panel/owner-admin-moderator";
+const ROLE_OPTIONS = ["owner", "admin", "moderator"] as const;
+type RoleOption = (typeof ROLE_OPTIONS)[number];
 
 function setSearchParam(
   pathname: string,
@@ -37,21 +31,26 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activeTab = searchParams.get("tab") === "suggestions" ? "suggestions" : "members";
+  const currentRole = searchParams.get("role");
+  const activeRole: RoleOption = ROLE_OPTIONS.includes(currentRole as RoleOption)
+    ? (currentRole as RoleOption)
+    : "owner";
 
-  const navigateToRolesTab = (tab: "members" | "suggestions") => {
+  const navigateToRole = (role: RoleOption) => {
     if (pathname !== ROLES_PATH) {
-      router.push(`${ROLES_PATH}?tab=${tab}`);
+      router.push(`${ROLES_PATH}?role=${role}`);
       return;
     }
 
     startTransition(() => {
       router.replace(
-        setSearchParam(pathname, new URLSearchParams(searchParams.toString()), "tab", tab),
+        setSearchParam(pathname, new URLSearchParams(searchParams.toString()), "role", role),
         { scroll: false },
       );
     });
   };
+
+  const roleLabel = activeRole.charAt(0).toUpperCase() + activeRole.slice(1);
 
   return (
     <div className="min-h-screen bg-(--bg-subtle)">
@@ -59,63 +58,39 @@ export function DashboardShell({ children }: DashboardShellProps) {
         <div className="hidden border-r border-(--border-subtle-plus) lg:flex">
           <Sidebar defaultCollapsed={false}>
             <Sidebar.Content>
-              <Sidebar.Header teamName="KPI Admin" />
               <Sidebar.Nav>
                 <SidebarTab
-                  active={false}
-                  disabled
-                  icon={<HouseLine size={16} weight="bold" />}
-                  label="Home"
-                />
-                <SidebarTab
-                  active={pathname === ROLES_PATH && activeTab === "members"}
+                  active={pathname === ROLES_PATH && activeRole === "owner"}
                   icon={<ShieldCheck size={16} weight="bold" />}
-                  label="Roles"
-                  onClick={() => navigateToRolesTab("members")}
+                  label="Owner"
+                  onClick={() => navigateToRole("owner")}
                 />
                 <SidebarTab
-                  active={pathname === ROLES_PATH && activeTab === "suggestions"}
-                  icon={<ChatCircleDots size={16} weight="bold" />}
-                  label="Suggestions"
-                  onClick={() => navigateToRolesTab("suggestions")}
+                  active={pathname === ROLES_PATH && activeRole === "admin"}
+                  icon={<ShieldCheck size={16} weight="bold" />}
+                  label="Admin"
+                  onClick={() => navigateToRole("admin")}
                 />
                 <SidebarTab
-                  active={false}
-                  disabled
-                  icon={<ChartBar size={16} weight="bold" />}
-                  label="Analytics"
+                  active={pathname === ROLES_PATH && activeRole === "moderator"}
+                  icon={<ShieldCheck size={16} weight="bold" />}
+                  label="Moderator"
+                  onClick={() => navigateToRole("moderator")}
                 />
               </Sidebar.Nav>
             </Sidebar.Content>
-            <Sidebar.Footer
-              userName="Paul Nekrasov"
-              userRole="Owner controls"
-            />
           </Sidebar>
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-20 border-b border-(--border-subtle-plus) bg-(--bg-subtle)/95 backdrop-blur-sm">
-            <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-              <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-(--text-muted)">
-                  Owner / Admin / Moderator
-                </p>
-                <div className="mt-1 flex items-center gap-3">
-                  <h1 className="text-sm font-semibold text-(--text-primary)">Admin Control Center</h1>
-                  <Badge variant="brand" size="sm">
-                    Prototype build
-                  </Badge>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Badge variant="neutral" className="hidden sm:inline-flex">
-                  <Sparkle size={12} weight="bold" aria-hidden="true" />
-                  <span className="ml-1">Token-first shell</span>
-                </Badge>
-                <ThemeToggle />
-              </div>
+            <div className="px-4 py-4 sm:px-6 lg:px-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-(--text-muted)">
+                Role Dashboard
+              </p>
+              <h1 className="mt-1 text-base font-semibold text-(--text-primary)">
+                {roleLabel} Access
+              </h1>
             </div>
           </header>
 

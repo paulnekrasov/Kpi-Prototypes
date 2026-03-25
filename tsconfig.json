@@ -38,6 +38,12 @@
       ],
       "@phosphor-icons/react": [
         "./kpi-admin-login/node_modules/@phosphor-icons/react"
+      ],
+      "@radix-ui/react-dialog": [
+        "./kpi-admin-login/node_modules/@radix-ui/react-dialog"
+      ],
+      "@radix-ui/react-slot": [
+        "./kpi-admin-login/node_modules/@radix-ui/react-slot"
       ]
     }
   },

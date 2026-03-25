@@ -120,6 +120,18 @@ These rules define how to translate Figma inputs into code for this project. Fol
 | Transitions | `--transition-fast` (0.15s), `--transition-smooth` (0.3s cubic-bezier) |
 | Focus rings | `--focus-ring`, `--focus-ring-error`, `--focus-ring-success` |
 
+### Radix UI + shadcn Authoring Pattern
+
+**shadcn/ui is built on top of Radix UI** — they are not two separate things. Radix provides headless, unstyled behavior primitives (`@radix-ui/react-dialog`, `@radix-ui/react-slot`, etc.); shadcn is a set of copy-paste components that wrap those primitives with Tailwind styling and authoring conventions. When we say "use Radix/shadcn patterns" we mean: use Radix primitives for behavior, and follow shadcn's structural conventions (`asChild`, `cn()`, `data-slot`, compound components).
+
+**Radix is the behavioral foundation — never the visual replacement.**
+
+- **Keep all custom CSS class names intact.** Classes like `.btn-primary`, `.icon-button-secondary`, `.sidebar-tab`, `.input-group` etc. are defined in tokens.css and carry polished, production-ready visual styles. Never strip them out.
+- **Keep all custom inline styles and design tokens intact.** Any `text-(--text-primary)`, `bg-(--bg-subtle)`, `shadow-[var(--shadow-subtle)]`, transition classes, and focus-ring utilities that were already there must stay.
+- **Radix primitives add behavior, not style.** Use `@radix-ui/react-dialog` for focus-trapping/portal/Escape key. Use `@radix-ui/react-slot` to enable `asChild` polymorphism. Use `DialogPrimitive.Title/Description` for correct ARIA semantics. None of this replaces visual styling.
+- **The correct composition pattern:** wrap the existing visual component with the Radix primitive using `asChild`. For example, `<DialogPrimitive.Close asChild><IconButton … /></DialogPrimitive.Close>` — the `IconButton` keeps its `.icon-button-secondary` class; Radix just wires up the close behavior.
+- **Never substitute bare Tailwind utilities for existing named CSS classes** just because they are "more explicit". The named classes exist specifically to encode the design system's visual contract.
+
 ### Component Patterns
 
 - All components must accept a `className` prop for styling extension

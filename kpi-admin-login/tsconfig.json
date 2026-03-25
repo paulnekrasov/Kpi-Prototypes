@@ -59,6 +59,12 @@
       ],
       "@phosphor-icons/react": [
         "./node_modules/@phosphor-icons/react"
+      ],
+      "@radix-ui/react-dialog": [
+        "./node_modules/@radix-ui/react-dialog"
+      ],
+      "@radix-ui/react-slot": [
+        "./node_modules/@radix-ui/react-slot"
       ]
     }
   },
