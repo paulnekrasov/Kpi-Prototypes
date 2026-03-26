@@ -1,34 +1,34 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { CaretUpDown, Sidebar as SidebarIcon } from "@phosphor-icons/react"
-import { Logo } from "@components/layout/Logo"
-import { cn } from "@components/utils/cn"
+import * as React from "react";
+import { CaretUpDown, Sidebar as SidebarIcon } from "@phosphor-icons/react";
+import { Logo } from "@components/layout/Logo";
+import { cn } from "@components/utils/cn";
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
 interface SidebarContextValue {
-  collapsed: boolean
-  setCollapsed: (collapsed: boolean) => void
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
 const SidebarContext = React.createContext<SidebarContextValue>({
   collapsed: false,
   setCollapsed: () => {},
-})
+});
 
 export function useSidebar(): SidebarContextValue {
-  return React.useContext(SidebarContext)
+  return React.useContext(SidebarContext);
 }
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 interface SidebarProps {
-  children: React.ReactNode
-  defaultCollapsed?: boolean
-  collapsed?: boolean
-  onCollapse?: (collapsed: boolean) => void
-  className?: string
+  children: React.ReactNode;
+  defaultCollapsed?: boolean;
+  collapsed?: boolean;
+  onCollapse?: (collapsed: boolean) => void;
+  className?: string;
 }
 
 function SidebarRoot({
@@ -38,17 +38,17 @@ function SidebarRoot({
   onCollapse,
   className,
 }: SidebarProps) {
-  const [uncontrolled, setUncontrolled] = React.useState(defaultCollapsed)
-  const isControlled = controlledCollapsed !== undefined
-  const collapsed = isControlled ? controlledCollapsed! : uncontrolled
+  const [uncontrolled, setUncontrolled] = React.useState(defaultCollapsed);
+  const isControlled = controlledCollapsed !== undefined;
+  const collapsed = isControlled ? controlledCollapsed! : uncontrolled;
 
   const setCollapsed = React.useCallback(
     (value: boolean) => {
-      if (!isControlled) setUncontrolled(value)
-      onCollapse?.(value)
+      if (!isControlled) setUncontrolled(value);
+      onCollapse?.(value);
     },
     [isControlled, onCollapse],
-  )
+  );
 
   return (
     <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
@@ -60,36 +60,35 @@ function SidebarRoot({
         {children}
       </aside>
     </SidebarContext.Provider>
-  )
+  );
 }
 
 // ─── Content ──────────────────────────────────────────────────────────────────
-// Wraps Header + Nav to push Footer to the bottom via flex: 1.
-// Provides the 24px gap between header and nav per Figma spec.
 
-interface SidebarContentProps {
-  children: React.ReactNode
-  className?: string
-}
-
-function SidebarContent({ children, className }: SidebarContentProps) {
+function SidebarContent({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <div
-      data-slot="sidebar-upper"
+      data-slot="sidebar-content"
       className={cn("sidebar-upper", className)}
     >
       {children}
     </div>
-  )
+  );
 }
 
 // ─── Header ───────────────────────────────────────────────────────────────────
 
 interface SidebarHeaderProps {
-  logo?: React.ReactNode
-  teamName?: string
-  onTeamClick?: () => void
-  className?: string
+  logo?: React.ReactNode;
+  teamName?: string;
+  onTeamClick?: () => void;
+  className?: string;
 }
 
 function SidebarHeader({
@@ -98,7 +97,7 @@ function SidebarHeader({
   onTeamClick,
   className,
 }: SidebarHeaderProps) {
-  const { collapsed, setCollapsed } = useSidebar()
+  const { collapsed, setCollapsed } = useSidebar();
 
   return (
     <div
@@ -123,7 +122,7 @@ function SidebarHeader({
             type="button"
             className="sidebar-header-team"
             onClick={onTeamClick}
-            aria-label={`Switch team \u2014 current: ${teamName}`}
+            aria-label={`Switch team — current: ${teamName}`}
           >
             <span className="sidebar-header-team-name">{teamName}</span>
             <CaretUpDown size={16} aria-hidden="true" />
@@ -140,17 +139,18 @@ function SidebarHeader({
         <SidebarIcon size={16} aria-hidden="true" />
       </button>
     </div>
-  )
+  );
 }
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 
-interface SidebarNavProps {
-  children: React.ReactNode
-  className?: string
-}
-
-function SidebarNav({ children, className }: SidebarNavProps) {
+function SidebarNav({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <nav
       data-slot="sidebar-nav"
@@ -159,25 +159,24 @@ function SidebarNav({ children, className }: SidebarNavProps) {
     >
       {children}
     </nav>
-  )
+  );
 }
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
-// Avatar initials from a name string
 function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/)
-  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-  return name.slice(0, 2).toUpperCase()
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return name.slice(0, 2).toUpperCase();
 }
 
 interface SidebarFooterProps {
-  avatarSrc?: string
-  avatarAlt?: string
-  userName?: string
-  userRole?: string
-  onUserClick?: () => void
-  className?: string
+  avatarSrc?: string;
+  avatarAlt?: string;
+  userName?: string;
+  userRole?: string;
+  onUserClick?: () => void;
+  className?: string;
 }
 
 function SidebarFooter({
@@ -188,7 +187,7 @@ function SidebarFooter({
   onUserClick,
   className,
 }: SidebarFooterProps) {
-  const { collapsed } = useSidebar()
+  const { collapsed } = useSidebar();
 
   return (
     <div
@@ -225,7 +224,7 @@ function SidebarFooter({
         </button>
       )}
     </div>
-  )
+  );
 }
 
 // ─── Compound export ──────────────────────────────────────────────────────────
@@ -235,4 +234,4 @@ export const Sidebar = Object.assign(SidebarRoot, {
   Header: SidebarHeader,
   Nav: SidebarNav,
   Footer: SidebarFooter,
-})
+});

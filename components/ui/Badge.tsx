@@ -1,8 +1,10 @@
-import React from "react";
+import * as React from "react";
 import { cn } from "@components/utils/cn";
 
 type BadgeVariant =
   | "neutral"
+  | "gray"
+  | "outline"
   | "brand"
   | "success"
   | "warning"
@@ -17,13 +19,22 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  neutral: "border-(--border-subtle-plus) bg-(--bg-subtle) text-(--text-muted)",
-  brand: "border-(--border-brand)/20 bg-(--color-brand)/10 text-(--text-accent)",
-  success: "border-(--status-success-border) bg-(--status-success-bg) text-(--color-success)",
-  warning: "border-(--status-warning-border) bg-(--status-warning-bg) text-(--color-warning)",
+  neutral:
+    "border-(--border-subtle-plus) bg-(--bg-subtle) text-(--text-muted)",
+  gray:
+    "border-(--border-subtle-plus) bg-(--bg-subtle-plus) text-(--text-muted)",
+  outline:
+    "border-(--border-subtle-plus) bg-transparent text-(--text-muted)",
+  brand:
+    "border-(--border-brand)/20 bg-(--color-brand)/10 text-(--text-accent)",
+  success:
+    "border-(--status-success-border) bg-(--status-success-bg) text-(--color-success)",
+  warning:
+    "border-(--status-warning-border) bg-(--status-warning-bg) text-(--color-warning)",
   destructive:
     "border-(--status-destructive-border) bg-(--status-destructive-bg) text-(--color-destructive)",
-  info: "border-(--status-info-border) bg-(--status-info-bg) text-(--color-info)",
+  info:
+    "border-(--status-info-border) bg-(--status-info-bg) text-(--color-info)",
 };
 
 const sizeClasses: Record<BadgeSize, string> = {
@@ -39,6 +50,7 @@ export function Badge({
 }: BadgeProps) {
   return (
     <span
+      data-slot="badge"
       className={cn(
         "inline-flex items-center justify-center rounded-full border font-medium leading-none whitespace-nowrap",
         sizeClasses[size],

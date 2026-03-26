@@ -1,7 +1,5 @@
-import React from "react"
-import { cn } from "@components/utils/cn"
-
-// ─── Subcomponents ───────────────────────────────────────────────
+import * as React from "react";
+import { cn } from "@components/utils/cn";
 
 function TableRoot({ className, ...props }: React.ComponentProps<"table">) {
   return (
@@ -12,7 +10,7 @@ function TableRoot({ className, ...props }: React.ComponentProps<"table">) {
         {...props}
       />
     </div>
-  )
+  );
 }
 
 function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
@@ -22,7 +20,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
       className={cn("[&_tr]:border-b [&_tr]:border-(--border-subtle)", className)}
       {...props}
     />
-  )
+  );
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
@@ -32,7 +30,7 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
       className={cn("[&_tr:last-child]:border-0", className)}
       {...props}
     />
-  )
+  );
 }
 
 function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
@@ -41,11 +39,11 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
       data-slot="table-footer"
       className={cn(
         "border-t border-(--border-subtle) bg-(--bg-base) font-medium [&>tr]:last:border-b-0",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
@@ -53,38 +51,44 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b border-(--border-subtle) transition-colors hover:bg-(--bg-subtle) data-[state=selected]:bg-(--bg-subtle)",
-        className
+        "border-b border-(--border-subtle)",
+        "transition-[background-color,box-shadow] duration-150 ease-out",
+        "hover:bg-(--bg-subtle) hover:shadow-[var(--shadow-subtle)]",
+        "data-[state=selected]:bg-(--bg-subtle)",
+        "motion-reduce:transition-none",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
-        data-slot="table-head"
-        className={cn(
-        "h-10 px-3 text-left align-middle font-medium text-(--text-muted) break-words [&:has([role=checkbox])]:pr-0",
-        className
+      data-slot="table-head"
+      className={cn(
+        "h-10 px-3 text-left align-middle font-medium text-(--text-muted) break-words",
+        "[&:has([role=checkbox])]:pr-0",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
-        data-slot="table-cell"
-        className={cn(
-        "px-3 py-2 align-middle break-words [&:has([role=checkbox])]:pr-0",
-        className
+      data-slot="table-cell"
+      className={cn(
+        "px-3 py-2 align-middle break-words",
+        "[&:has([role=checkbox])]:pr-0",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
@@ -94,10 +98,10 @@ function TableCaption({ className, ...props }: React.ComponentProps<"caption">) 
       className={cn("mt-4 text-sm text-(--text-muted)", className)}
       {...props}
     />
-  )
+  );
 }
 
-// ─── Compound export (coss UI pattern) ───────────────────────────
+// ─── Compound export ──────────────────────────────────────────────────────────
 //
 // Usage:
 //   <Table>
@@ -106,16 +110,15 @@ function TableCaption({ className, ...props }: React.ComponentProps<"caption">) 
 //   </Table>
 
 const Table = Object.assign(TableRoot, {
-  Header:  TableHeader,
-  Body:    TableBody,
-  Footer:  TableFooter,
-  Row:     TableRow,
-  Head:    TableHead,
-  Cell:    TableCell,
+  Header: TableHeader,
+  Body: TableBody,
+  Footer: TableFooter,
+  Row: TableRow,
+  Head: TableHead,
+  Cell: TableCell,
   Caption: TableCaption,
-})
+});
 
-// Named exports kept for flat import style
 export {
   Table,
   TableHeader,
@@ -125,4 +128,4 @@ export {
   TableRow,
   TableCell,
   TableCaption,
-}
+};

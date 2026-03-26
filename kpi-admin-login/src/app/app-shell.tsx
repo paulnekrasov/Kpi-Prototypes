@@ -11,8 +11,16 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
-  const isDashboardRoute = pathname.startsWith("/admin-panel");
 
+  // Owner-admin-moderator has its own full-page layout (sidebar + content)
+  const isFullPageRoute = pathname.startsWith(
+    "/admin-panel/owner-admin-moderator",
+  );
+  if (isFullPageRoute) {
+    return <>{children}</>;
+  }
+
+  const isDashboardRoute = pathname.startsWith("/admin-panel");
   if (isDashboardRoute) {
     return <DashboardShell>{children}</DashboardShell>;
   }

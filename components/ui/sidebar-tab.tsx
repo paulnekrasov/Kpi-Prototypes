@@ -1,33 +1,24 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useSidebar } from "@components/layout/sidebar"
-import { cn } from "@components/utils/cn"
+import * as React from "react";
+import { useSidebar } from "@components/layout/sidebar";
+import { cn } from "@components/utils/cn";
 
 export interface SidebarTabProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  active?: boolean
-  icon?: React.ReactNode
-  label: string
+  active?: boolean;
+  icon?: React.ReactNode;
+  label: string;
 }
 
 export const SidebarTab = React.forwardRef<HTMLButtonElement, SidebarTabProps>(
   (
-    {
-      className,
-      active = false,
-      icon,
-      label,
-      role,
-      type,
-      disabled,
-      ...props
-    },
+    { className, active = false, icon, label, role, type, disabled, ...props },
     ref,
   ) => {
-    const { collapsed } = useSidebar()
-    const [showTooltip, setShowTooltip] = React.useState(false)
-    const ariaSelected = role === "tab" ? active : props["aria-selected"]
+    const { collapsed } = useSidebar();
+    const [showTooltip, setShowTooltip] = React.useState(false);
+    const ariaSelected = role === "tab" ? active : props["aria-selected"];
 
     const button = (
       <button
@@ -63,11 +54,11 @@ export const SidebarTab = React.forwardRef<HTMLButtonElement, SidebarTabProps>(
           {label}
         </span>
       </button>
-    )
+    );
 
-    if (!collapsed) return button
+    if (!collapsed) return button;
 
-    const tooltipText = disabled ? `${label} (unavailable)` : label
+    const tooltipText = disabled ? `${label} (unavailable)` : label;
 
     return (
       <div className="sidebar-tab-wrapper">
@@ -82,8 +73,8 @@ export const SidebarTab = React.forwardRef<HTMLButtonElement, SidebarTabProps>(
           </div>
         )}
       </div>
-    )
+    );
   },
-)
+);
 
-SidebarTab.displayName = "SidebarTab"
+SidebarTab.displayName = "SidebarTab";

@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Skill(gsd:debug)",
-      "mcp__figma-console__figma_get_component_for_development"
+      "mcp__figma-console__figma_get_component_for_development",
+      "Bash(ls node_modules/.pnpm/@phosphor-icons*)",
+      "Bash(node -e \"const p = require\\(''@phosphor-icons/react''\\); console.log\\(''House:'', !!p.House, ''Users:'', !!p.Users, ''Funnel:'', !!p.Funnel, ''LightbulbFilament:'', !!p.LightbulbFilament\\)\")",
+      "Bash(node -e \"const p = require\\(''@phosphor-icons/react''\\); console.log\\(''House:'', typeof p.House, ''Users:'', typeof p.Users, ''Funnel:'', typeof p.Funnel, ''LightbulbFilament:'', typeof p.LightbulbFilament\\)\")",
+      "WebSearch",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(npx tsc:*)",
+      "Bash(find /c/Users/Asus/OneDrive/Desktop/prototypes/kpi-admin-login -maxdepth 3 -name tokens.css -o -name *.css -type f)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

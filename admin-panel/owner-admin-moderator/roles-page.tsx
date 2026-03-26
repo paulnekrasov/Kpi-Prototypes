@@ -1,799 +1,693 @@
-"use client"
+"use client";
 
-import React, {
-  startTransition,
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import { useEffect, useMemo, useState } from "react";
 import {
+  MagnifyingGlass,
+  Funnel,
+  Plus,
+  PencilSimple,
+  Trash,
   Eye,
   EyeSlash,
-  Funnel,
-  MagnifyingGlass,
-  PencilSimple,
-  Plus,
-  Trash,
-  UsersThree,
-} from "@phosphor-icons/react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Table } from "@components/layout/table"
-import { Button } from "@components/ui/Button"
-import { Pagination } from "@components/ui/pagination"
-import { Badge } from "@components/ui/Badge"
-import { Tabs } from "@components/ui/Tabs"
+  LightbulbFilament,
+  House,
+  Users,
+  FileText,
+  ChartBar,
+  UserPlus,
+  Student,
+  Handshake,
+  Folder,
+  Calendar,
+  Headset,
+  CaretUp,
+  CaretDown,
+} from "@phosphor-icons/react";
+import { Badge } from "@components/ui/Badge";
+import { Pagination } from "@components/ui/pagination";
+import { Table } from "@components/layout/table";
+import { Sidebar } from "@components/layout/sidebar";
+import { SidebarTab } from "@components/ui/sidebar-tab";
+import { cn } from "@components/utils/cn";
+import { MemberFormDialog } from "./member-form-dialog";
+import type { MemberFormData } from "./member-form-dialog";
+import { DeleteDialog } from "./delete-dialog";
 import {
-  DEPARTMENTS,
   INITIAL_MEMBERS,
   INITIAL_SUGGESTIONS,
-  MEMBER_ROLES,
-  type Department,
   type Member,
-  type MemberRole,
-  type Suggestion,
-  type SuggestionStatus,
-} from "./roles-data"
-import { DeleteDialog } from "./delete-dialog"
-import { MemberFormDialog, type MemberFormData } from "./member-form-dialog"
-import { cn } from "@components/utils/cn"
+  type ViewerRole,
+} from "./roles-data";
 
-// ─── Constants ──────────────────────────────────────────────────────
+const PAGE_SIZE = 8;
+const COLUMNS = ["ID", "Name & Surname", "Roles", "Gmail", "Password", "Notes", "Created", "Actions"] as const;
+const COLUMN_COUNT = COLUMNS.length;
 
-const PAGE_SIZE = 6
-
-const roleBadgeVariant: Record<
-  MemberRole,
-  "destructive" | "brand" | "warning" | "info"
-> = {
-  Owner: "destructive",
-  Admin: "brand",
-  Moderator: "warning",
-  "Media Rep": "info",
+function formatDate(value: string) {
+  const date = new Date(value);
+  return {
+    date: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(date),
+    time: new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }).format(date),
+  };
 }
 
-const suggestionStatusVariant: Record<
-  SuggestionStatus,
-  "neutral" | "warning" | "success" | "destructive"
-> = {
-  New: "neutral",
-  "In Review": "warning",
-  Approved: "success",
-  Declined: "destructive",
+function maskValue(value: string): string {
+  return "\u2022".repeat(8);
 }
 
-// Avatar colors — maps to existing token triplets, zero new tokens
-const AVATAR_STYLES = [
-  "bg-(--color-brand)/10 text-(--text-accent)",
-  "bg-(--status-success-bg) text-(--color-success)",
-  "bg-(--status-warning-bg) text-(--color-warning)",
-  "bg-(--status-info-bg) text-(--color-info)",
-  "bg-(--status-destructive-bg) text-(--color-destructive)",
-  "bg-(--bg-subtle) text-(--text-muted)",
-] as const
-
-// ─── Helpers ────────────────────────────────────────────────────────
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/)
-  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-  return name.slice(0, 2).toUpperCase()
+function maskGoogle(email: string): string {
+  const parts = email.split("@");
+  if (parts.length !== 2) return maskValue(email);
+  return "\u2022".repeat(8) + "@" + parts[1];
 }
 
-function getAvatarStyle(name: string): string {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  return AVATAR_STYLES[Math.abs(hash) % AVATAR_STYLES.length]
-}
-
-function formatDate(dateStr: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(dateStr))
-}
-
-function formatTime(dateStr: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(dateStr))
-}
-
-// ─── Inline sub-components ──────────────────────────────────────────
-
-function Avatar({ name }: { name: string }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-lg text-xs font-semibold",
-        getAvatarStyle(name)
-      )}
-      aria-hidden="true"
-    >
-      {getInitials(name)}
-    </span>
-  )
-}
-
-function MaskedCell({ value, label }: { value: string; label: string }) {
-  const [revealed, setRevealed] = useState(false)
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className={cn("text-sm", !revealed && "tracking-wider")}>
-        {revealed ? value : "••••••••"}
-      </span>
-      <button
-        type="button"
-        onClick={() => setRevealed(!revealed)}
-        className="inline-flex h-6 w-6 items-center justify-center rounded text-(--text-muted) transition-colors hover:bg-(--bg-subtle) hover:text-(--text-primary) focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none"
-        aria-label={revealed ? `Hide ${label}` : `Reveal ${label}`}
-        aria-pressed={revealed}
-      >
-        {revealed ? (
-          <EyeSlash size={14} weight="regular" aria-hidden="true" />
-        ) : (
-          <Eye size={14} weight="regular" aria-hidden="true" />
-        )}
-      </button>
-    </div>
-  )
-}
-
-function EmptyState({
-  message,
-  description,
-}: {
-  message: string
-  description?: string
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-3 py-16">
-      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--bg-subtle)">
-        <UsersThree
-          size={24}
-          className="text-(--text-muted)"
-          aria-hidden="true"
-        />
-      </div>
-      <p className="text-center text-sm font-medium text-(--text-primary) text-wrap-balance">
-        {message}
-      </p>
-      {description && (
-        <p className="max-w-xs text-center text-sm text-(--text-muted) text-wrap-pretty">
-          {description}
-        </p>
-      )}
-    </div>
-  )
-}
-
-// ─── Filter Dropdown ────────────────────────────────────────────────
-
-function FilterDropdown({
-  selectedRole,
-  onSelect,
-}: {
-  selectedRole: MemberRole | "all"
-  onSelect: (role: MemberRole | "all") => void
-}) {
-  const [open, setOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-  const listRef = useRef<HTMLDivElement>(null)
-  const allOptions: (MemberRole | "all")[] = ["all", ...MEMBER_ROLES]
-
-  // Close on click outside
-  useEffect(() => {
-    if (!open) return
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [open])
-
-  // Keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!open && (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ")) {
-      e.preventDefault()
-      setOpen(true)
-      return
-    }
-    if (!open) return
-
-    const buttons = listRef.current?.querySelectorAll<HTMLButtonElement>(
-      '[role="option"]'
-    )
-    if (!buttons) return
-    const items = Array.from(buttons)
-    const focused = document.activeElement as HTMLElement
-    const idx = items.indexOf(focused as HTMLButtonElement)
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault()
-        items[Math.min(idx + 1, items.length - 1)]?.focus()
-        break
-      case "ArrowUp":
-        e.preventDefault()
-        items[Math.max(idx - 1, 0)]?.focus()
-        break
-      case "Escape":
-        e.preventDefault()
-        setOpen(false)
-        break
-    }
-  }
-
-  // Focus the first option when opening
-  useEffect(() => {
-    if (open) {
-      const selected = listRef.current?.querySelector<HTMLButtonElement>(
-        '[aria-selected="true"]'
-      )
-      selected?.focus()
-    }
-  }, [open])
-
-  return (
-    <div className="relative" ref={dropdownRef}>
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => setOpen(!open)}
-        iconLeft={<Funnel size={16} />}
-        aria-expanded={open}
-        aria-haspopup="listbox"
-      >
-        {selectedRole === "all" ? "All Roles" : selectedRole}
-      </Button>
-
-      {open && (
-        <div
-          ref={listRef}
-          role="listbox"
-          aria-label="Filter by role"
-          onKeyDown={handleKeyDown}
-          className="absolute left-0 top-full z-50 mt-1 w-44 rounded-lg border border-(--border-subtle) bg-(--bg-base) py-1 shadow-[var(--shadow-subtle-active)] animate-[dialogIn_150ms_ease-out]"
-        >
-          {allOptions.map((option) => (
-            <button
-              key={option}
-              type="button"
-              role="option"
-              aria-selected={selectedRole === option}
-              onClick={() => {
-                onSelect(option)
-                setOpen(false)
-              }}
-              className={cn(
-                "w-full px-3 py-2 text-left text-sm transition-colors focus:bg-(--bg-subtle) focus:outline-none",
-                selectedRole === option
-                  ? "bg-(--bg-subtle) font-medium text-(--color-brand)"
-                  : "text-(--text-primary) hover:bg-(--bg-subtle)"
-              )}
-            >
-              {option === "all" ? "All Roles" : option}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ─── Shared table head class ────────────────────────────────────────
-
-const thClass =
-  "text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)"
-
-// ═════════════════════════════════════════════════════════════════════
-// ─── Main Roles Page ────────────────────────────────────────────────
-// ═════════════════════════════════════════════════════════════════════
-
-type DialogState =
-  | { type: "create" }
-  | { type: "edit"; member: Member }
-  | { type: "delete"; member: Member }
-  | null
+// ─── Main Page ─────────────────────────────────────────────
 
 export default function RolesPage() {
-  // URL-based tab state (syncs with sidebar navigation in dashboard-shell)
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const pathname = usePathname()
-  const activeTab =
-    searchParams.get("tab") === "suggestions" ? "suggestions" : "members"
+  // ── Mock RBAC role (toggle to test Moderator vs Owner/Admin) ──
+  const [currentUserRole, setCurrentUserRole] = useState<ViewerRole>("Owner");
 
-  const setActiveTab = useCallback(
-    (tab: string) => {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set("tab", tab)
-      startTransition(() => {
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-      })
-    },
-    [searchParams, router, pathname]
-  )
+  const [members, setMembers] = useState<Member[]>(INITIAL_MEMBERS);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState<"members" | "suggestions">("members");
 
-  // Data state
-  const [members, setMembers] = useState<Member[]>(INITIAL_MEMBERS)
-  const [suggestions, setSuggestions] =
-    useState<Suggestion[]>(INITIAL_SUGGESTIONS)
+  // Visibility toggles per-member for sensitive fields
+  const [visibleEmails, setVisibleEmails] = useState<Set<string>>(new Set());
+  const [visiblePasswords, setVisiblePasswords] = useState<Set<string>>(new Set());
 
-  // UI state
-  const [search, setSearch] = useState("")
-  const [filterRole, setFilterRole] = useState<MemberRole | "all">("all")
-  const [page, setPage] = useState(1)
-  const [dialogState, setDialogState] = useState<DialogState>(null)
+  // Dialog states
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletingMember, setDeletingMember] = useState<Member | null>(null);
 
-  const searchId = useId()
-
-  // Reset page when filters change
+  // ── Force light mode for this page ──
   useEffect(() => {
-    setPage(1)
-  }, [search, filterRole])
+    const html = document.documentElement;
+    const prev = html.getAttribute("data-theme");
+    html.setAttribute("data-theme", "light");
+    return () => {
+      if (prev) html.setAttribute("data-theme", prev);
+      else html.removeAttribute("data-theme");
+    };
+  }, []);
 
-  // Filtered & paged members
-  const filtered = useMemo(() => {
-    return members.filter((m) => {
-      const q = search.toLowerCase()
-      const matchesSearch =
-        q === "" ||
-        m.name.toLowerCase().includes(q) ||
-        m.id.toLowerCase().includes(q) ||
-        m.gmail.toLowerCase().includes(q)
+  const isPrivileged = currentUserRole === "Owner" || currentUserRole === "Admin";
+  const suggestionCount = INITIAL_SUGGESTIONS.filter(
+    (s) => s.status === "New" || s.status === "In Review",
+  ).length;
 
-      const matchesRole =
-        filterRole === "all" || m.roles.includes(filterRole)
+  // ── Filtering ──
+  const filteredMembers = useMemo(() => {
+    const lowered = query.trim().toLowerCase();
+    return members.filter((member) => {
+      if (lowered === "") return true;
+      return (
+        member.id.toLowerCase().includes(lowered) ||
+        member.name.toLowerCase().includes(lowered) ||
+        member.gmail.toLowerCase().includes(lowered)
+      );
+    });
+  }, [members, query]);
 
-      return matchesSearch && matchesRole
-    })
-  }, [members, search, filterRole])
+  const totalPages = Math.max(1, Math.ceil(filteredMembers.length / PAGE_SIZE));
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const pagedMembers = filtered.slice(
+  useEffect(() => {
+    setPage(1);
+  }, [query]);
+
+  useEffect(() => {
+    setPage((prev) => Math.min(prev, totalPages));
+  }, [totalPages]);
+
+  const pagedMembers = filteredMembers.slice(
     (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  )
+    page * PAGE_SIZE,
+  );
 
-  // CRUD handlers
-  const handleSave = useCallback(
-    (data: MemberFormData) => {
-      if (dialogState?.type === "edit") {
-        setMembers((prev) =>
-          prev.map((m) =>
-            m.id === dialogState.member.id ? { ...m, ...data } : m
-          )
-        )
-      } else {
-        const maxId = members.reduce(
-          (max, m) =>
-            Math.max(max, parseInt(m.id.replace("M-", ""), 10)),
-          0
-        )
-        setMembers((prev) => [
-          ...prev,
-          {
-            ...data,
-            id: `M-${String(maxId + 1).padStart(3, "0")}`,
-            createdAt: new Date().toISOString(),
-          },
-        ])
-      }
-      setDialogState(null)
-    },
-    [dialogState, members]
-  )
+  // ── Handlers ──
+  const toggleEmailVisibility = (id: string) => {
+    setVisibleEmails((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
-  const handleDelete = useCallback(() => {
-    if (dialogState?.type === "delete") {
+  const togglePasswordVisibility = (id: string) => {
+    setVisiblePasswords((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleAddMember = () => {
+    setEditingMember(null);
+    setFormOpen(true);
+  };
+
+  const handleEditMember = (member: Member) => {
+    setEditingMember(member);
+    setFormOpen(true);
+  };
+
+  const handleDeleteMember = (member: Member) => {
+    setDeletingMember(member);
+    setDeleteOpen(true);
+  };
+
+  const handleSaveForm = (data: MemberFormData) => {
+    if (editingMember) {
       setMembers((prev) =>
-        prev.filter((m) => m.id !== dialogState.member.id)
-      )
-      setDialogState(null)
+        prev.map((m) =>
+          m.id === editingMember.id
+            ? { ...m, ...data, passwordAutoGenerated: false }
+            : m,
+        ),
+      );
+    } else {
+      const newMember: Member = {
+        id: `M-${String(members.length + 1).padStart(3, "0")}`,
+        ...data,
+        createdAt: new Date().toISOString(),
+        department: data.department,
+        passwordAutoGenerated: true,
+      };
+      setMembers((prev) => [...prev, newMember]);
     }
-  }, [dialogState])
+  };
 
-  const handleSuggestionStatus = useCallback(
-    (id: string, status: SuggestionStatus) => {
-      setSuggestions((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, status } : s))
-      )
-    },
-    []
-  )
+  const handleConfirmDelete = () => {
+    if (!deletingMember) return;
+    setMembers((prev) => prev.filter((m) => m.id !== deletingMember.id));
+    setDeletingMember(null);
+  };
 
-  // ─── Render ─────────────────────────────────────────────────────
+  // ── Button styles (shared) ──
+  const iconBtnClasses =
+    "inline-flex h-9 w-9 items-center justify-center rounded-lg text-(--text-muted) transition-[color,background-color,transform] duration-150 hover:duration-0 ease-out hover:bg-(--bg-subtle) hover:text-(--text-primary) active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100";
 
   return (
-    <>
-      {/* Page header */}
-      <header>
-        <h1
-          className="text-2xl font-semibold tracking-tight text-(--text-primary) text-wrap-balance"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Roles
-        </h1>
-        <p className="mt-1 text-sm text-(--text-muted)">
-          {members.length} members · {suggestions.length} suggestions
-        </p>
-      </header>
-
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Tabs.List>
-            <Tabs.Trigger value="members" count={members.length}>
-              Members
-            </Tabs.Trigger>
-            <Tabs.Trigger value="suggestions" count={suggestions.length}>
-              Suggestions
-            </Tabs.Trigger>
-          </Tabs.List>
-
-          {activeTab === "members" && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setDialogState({ type: "create" })}
-              iconLeft={<Plus size={16} weight="bold" />}
-            >
-              Add Member
-            </Button>
-          )}
-        </div>
-
-        {/* ── Members Tab ─────────────────────────────────────────── */}
-        <Tabs.Panel value="members">
-          {/* Search + filter bar */}
-          <div className="mb-4 flex flex-wrap items-center gap-3">
-            <div className="relative min-w-0 flex-1 max-w-md">
-              <MagnifyingGlass
-                size={16}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-(--text-muted)"
-                aria-hidden="true"
+    <div className="flex min-h-screen min-h-dvh bg-(--bg-subtle)">
+      {/* ── Sidebar ── */}
+      <div className="flex border-r border-(--border-subtle-plus) flex-shrink-0">
+        <Sidebar defaultCollapsed={false}>
+          <Sidebar.Content>
+            <Sidebar.Header />
+            <Sidebar.Nav>
+              <SidebarTab
+                icon={<House size={16} weight="bold" />}
+                label="Home"
+                active={false}
               />
-              <input
-                id={searchId}
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name, ID, or email…"
-                autoComplete="off"
-                className="w-full min-h-[36px] rounded-lg border border-(--border-subtle) bg-(--bg-base) py-1.5 pl-9 pr-3 text-sm text-(--text-primary) placeholder:text-(--text-subtle) transition-[border-color,box-shadow] focus:border-(--color-brand) focus:shadow-[0_0_0_4px_var(--focus-ring)] focus:outline-none"
+              <SidebarTab
+                icon={<LightbulbFilament size={16} weight="bold" />}
+                label="Suggestions"
+                active={false}
               />
-            </div>
-            <FilterDropdown
-              selectedRole={filterRole}
-              onSelect={setFilterRole}
-            />
+              <SidebarTab
+                icon={<FileText size={16} weight="bold" />}
+                label="Logs"
+                active={false}
+              />
+              <SidebarTab
+                icon={<ChartBar size={16} weight="bold" />}
+                label="Analytics"
+                active={false}
+              />
+              <SidebarTab
+                icon={<Users size={16} weight="bold" />}
+                label="Roles"
+                active={true}
+              />
+              <SidebarTab
+                icon={<UserPlus size={16} weight="bold" />}
+                label="Recruitment"
+                active={false}
+              />
+              <SidebarTab
+                icon={<Student size={16} weight="bold" />}
+                label="Student Associations"
+                active={false}
+              />
+              <SidebarTab
+                icon={<Handshake size={16} weight="bold" />}
+                label="Partners"
+                active={false}
+              />
+              <SidebarTab
+                icon={<Folder size={16} weight="bold" />}
+                label="Documents"
+                active={false}
+              />
+              <SidebarTab
+                icon={<Calendar size={16} weight="bold" />}
+                label="Content Plan"
+                active={false}
+              />
+              <SidebarTab
+                icon={<Headset size={16} weight="bold" />}
+                label="Support"
+                active={false}
+              />
+            </Sidebar.Nav>
+          </Sidebar.Content>
+          <Sidebar.Footer userName="Paul Nekrasov" userRole={currentUserRole} />
+        </Sidebar>
+      </div>
+
+      {/* ── Main Content ── */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* ── Header ── */}
+        <header className="border-b border-(--border-subtle-plus) bg-(--bg-base) px-8 pt-8 pb-6">
+          <div className="mx-auto w-full max-w-[1440px]">
+            <h1 className="font-family-(--font-display) text-2xl font-bold tracking-tight text-(--text-primary) text-wrap-balance">Roles</h1>
+            <p className="mt-1.5 text-sm text-(--text-muted)">{members.length} members across your organization</p>
           </div>
+        </header>
 
-          {/* Table */}
-          {pagedMembers.length === 0 ? (
-            <EmptyState
-              message="No Members Found"
-              description="Try adjusting your search or filters to find the member you are looking for."
-            />
-          ) : (
-            <>
-              <div className="overflow-hidden rounded-xl border border-(--border-subtle)">
+        <main id="main-content" className="flex-1 overflow-x-hidden bg-(--bg-base) px-8 py-6">
+          <div className="mx-auto w-full max-w-[1440px] space-y-6">
+            {/* ── Tabs & Action Bar Header ── */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              {/* ── Tabs ── */}
+              <div className="flex items-center gap-1 rounded-lg border border-(--border-subtle-plus) bg-(--bg-base) p-1 w-fit">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("members")}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-[color,background-color,transform] duration-150 hover:duration-0 ease-out active:scale-[0.97] motion-reduce:active:scale-100",
+                    activeTab === "members"
+                      ? "bg-(--bg-base) text-(--text-primary) shadow-[var(--shadow-subtle)]"
+                      : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-subtle)",
+                  )}
+                >
+                  <Users size={16} weight="bold" aria-hidden="true" />
+                  Members
+                </button>
+                {isPrivileged && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("suggestions")}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-[color,background-color,transform] duration-150 hover:duration-0 ease-out active:scale-[0.97] motion-reduce:active:scale-100",
+                      activeTab === "suggestions"
+                        ? "bg-(--bg-base) text-(--text-primary) shadow-[var(--shadow-subtle)]"
+                        : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-subtle)",
+                    )}
+                  >
+                    <LightbulbFilament size={16} weight="bold" aria-hidden="true" />
+                    Suggestions
+                    {suggestionCount > 0 && (
+                      <Badge variant="destructive" size="sm" className="ml-1 h-5 px-1.5 text-[10px]">
+                        {suggestionCount}
+                      </Badge>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* ── Action Bar ── */}
+              {activeTab === "members" && (
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="relative flex min-w-[280px] max-w-md flex-1 items-center h-10 sm:min-w-[320px] sm:flex-none">
+                    <div className="absolute left-3.5 z-10 pointer-events-none opacity-50">
+                      <MagnifyingGlass size={16} weight="bold" />
+                    </div>
+                    <input
+                      id="member-search"
+                      type="search"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search by name, ID, or email..."
+                      aria-label="Search members by name, ID, or email"
+                      autoComplete="off"
+                      className="h-full w-full rounded-lg border border-(--border-subtle) bg-(--bg-base) pl-10 pr-4 text-sm font-medium text-(--text-primary) placeholder:text-(--text-subtle) focus:border-(--color-brand) focus:outline-none focus:ring-4 focus:ring-(--focus-ring) transition-[border-color,box-shadow] duration-150 ease-out"
+                    />
+                  </div>
+
+                  {/* Filter */}
+                  <button
+                    type="button"
+                    className="inline-flex h-10 items-center gap-2 rounded-lg border border-(--border-subtle) bg-(--bg-base) px-3 py-2 text-sm font-semibold text-(--text-muted) transition-[color,background-color,border-color,transform] duration-150 hover:duration-0 ease-out hover:bg-(--bg-subtle) hover:text-(--text-primary) active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100"
+                  >
+                    <Funnel size={16} weight="bold" aria-hidden="true" />
+                    <span>Filter</span>
+                    <CaretDown size={12} weight="bold" className="opacity-40" />
+                  </button>
+
+                  <div className="hidden flex-1 sm:block" />
+
+                  {/* Add / Suggest Member */}
+                  {isPrivileged ? (
+                    <button
+                      type="button"
+                      onClick={handleAddMember}
+                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-(--color-brand) px-4 py-2 text-sm font-bold text-(--text-on-accent) shadow-[var(--shadow-btn-primary)] transition-[transform,box-shadow] duration-150 hover:duration-0 ease-out hover:translate-y-[-1px] hover:shadow-[var(--shadow-btn-primary-hover)] active:scale-[0.97] active:shadow-[var(--shadow-btn-primary-pressed)] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0"
+                    >
+                      <Plus size={16} weight="bold" aria-hidden="true" />
+                      Add member
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-amber-500/20 transition-[transform,box-shadow] duration-150 hover:duration-0 ease-out hover:translate-y-[-1px] active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0"
+                    >
+                      <LightbulbFilament size={16} weight="bold" aria-hidden="true" />
+                      Suggest member
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {activeTab === "members" ? (
+              <>
+                {/* ── Members Table ── */}
+                <div className="overflow-hidden rounded-xl border border-(--border-subtle-plus) bg-(--bg-base) shadow-[var(--shadow-subtle)]">
+                  <Table>
+                    <Table.Header>
+                      <Table.Row className="bg-(--bg-subtle)/60 hover:bg-(--bg-subtle)/60 hover:shadow-none">
+                        {COLUMNS.map((col) => (
+                          <Table.Head
+                            key={col}
+                            className="select-none text-[11px] font-semibold uppercase tracking-wider text-(--text-muted)"
+                          >
+                            <div className={cn("flex items-center gap-2", col === "Actions" && "justify-end pr-6")}>
+                              {col}
+                              {col !== "Actions" && (
+                                <div className="flex flex-col opacity-30">
+                                  <CaretUp size={8} weight="bold" />
+                                  <CaretDown size={8} weight="bold" className="-mt-0.5" />
+                                </div>
+                              )}
+                            </div>
+                          </Table.Head>
+                        ))}
+                      </Table.Row>
+                    </Table.Header>
+
+                    <Table.Body>
+                      {pagedMembers.length > 0 ? (
+                        pagedMembers.map((member) => {
+                          const emailVisible = visibleEmails.has(member.id);
+                          const passwordVisible = visiblePasswords.has(member.id);
+                          const canShowPassword = !!member.passwordAutoGenerated;
+
+                          return (
+                            <Table.Row key={member.id}>
+                              {/* ID */}
+                              <Table.Cell className="font-mono text-xs text-(--text-muted)">
+                                {member.id}
+                              </Table.Cell>
+
+                              {/* Name & Surname */}
+                              <Table.Cell>
+                                <div className="flex items-center gap-3">
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--color-brand)/10 text-[11px] font-bold text-(--color-brand)">
+                                    {member.name
+                                      .split(" ")
+                                      .map((n) => n[0])
+                                      .join("")
+                                      .toUpperCase()
+                                      .slice(0, 2)}
+                                  </div>
+                                  <span className="font-medium text-(--text-primary)">
+                                    {member.name}
+                                  </span>
+                                </div>
+                              </Table.Cell>
+
+                              {/* Roles */}
+                              <Table.Cell>
+                                <div className="flex flex-wrap gap-2">
+                                  {member.roles.map((role) => (
+                                    <Badge
+                                      key={role}
+                                      variant="outline"
+                                      className={cn(
+                                        "rounded-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-xs",
+                                        role === "Owner" ? "border-amber-300/60 bg-amber-50 text-amber-700" :
+                                        role === "Admin" ? "border-indigo-300/60 bg-indigo-50 text-indigo-700" :
+                                        role === "Moderator" ? "border-violet-300/60 bg-violet-50 text-violet-700" :
+                                        role === "Media Rep" ? "border-sky-300/60 bg-sky-50 text-sky-700" :
+                                        "border-(--border-subtle) bg-(--bg-subtle) text-(--text-muted)"
+                                      )}
+                                    >
+                                      {role}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </Table.Cell>
+
+                              {/* Gmail (masked) */}
+                              <Table.Cell className="text-(--text-muted) whitespace-nowrap">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={emailVisible ? "" : "select-none"}>
+                                    {emailVisible ? member.gmail : maskGoogle(member.gmail)}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => toggleEmailVisibility(member.id)}
+                                    className={cn(iconBtnClasses, "flex-shrink-0")}
+                                    aria-label={emailVisible ? "Hide email" : "Show email"}
+                                    aria-pressed={emailVisible}
+                                  >
+                                    {emailVisible ? (
+                                      <EyeSlash size={14} aria-hidden="true" />
+                                    ) : (
+                                      <Eye size={14} aria-hidden="true" />
+                                    )}
+                                  </button>
+                                </div>
+                              </Table.Cell>
+
+                              {/* Password (masked, with auto-gen logic) */}
+                              <Table.Cell className="text-(--text-muted) whitespace-nowrap">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={passwordVisible ? "font-mono text-xs" : "select-none"}>
+                                    {passwordVisible && canShowPassword
+                                      ? member.password
+                                      : maskValue(member.password)}
+                                  </span>
+                                  {canShowPassword ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => togglePasswordVisibility(member.id)}
+                                      className={cn(iconBtnClasses, "flex-shrink-0")}
+                                      aria-label={passwordVisible ? "Hide password" : "Show password"}
+                                      aria-pressed={passwordVisible}
+                                    >
+                                      {passwordVisible ? (
+                                        <EyeSlash size={14} aria-hidden="true" />
+                                      ) : (
+                                        <Eye size={14} aria-hidden="true" />
+                                      )}
+                                    </button>
+                                  ) : null}
+                                </div>
+                              </Table.Cell>
+
+                              {/* Notes */}
+                              <Table.Cell className="max-w-[200px] truncate text-(--text-muted)">
+                                {member.notes || "\u2014"}
+                              </Table.Cell>
+
+                              {/* Created */}
+                              <Table.Cell className="whitespace-nowrap tabular-nums">
+                                <div className="flex flex-col">
+                                  <span className="text-sm text-(--text-primary)">
+                                    {formatDate(member.createdAt).date}
+                                  </span>
+                                  <span className="text-xs text-(--text-muted)">
+                                    {formatDate(member.createdAt).time}
+                                  </span>
+                                </div>
+                              </Table.Cell>
+
+                              {/* Actions */}
+                              <Table.Cell className="min-w-[120px] text-right pr-6">
+                                <div className="flex items-center justify-end gap-3.5">
+                                  {isPrivileged ? (
+                                    <>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleEditMember(member)}
+                                        className={cn(iconBtnClasses, "flex-shrink-0")}
+                                        aria-label={`Edit ${member.name}`}
+                                      >
+                                        <PencilSimple size={14} weight="bold" aria-hidden="true" />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteMember(member)}
+                                        className={cn(
+                                          iconBtnClasses,
+                                          "flex-shrink-0 hover:bg-(--status-destructive-bg) hover:text-(--color-destructive)",
+                                        )}
+                                        aria-label={`Delete ${member.name}`}
+                                      >
+                                        <Trash size={14} weight="bold" aria-hidden="true" />
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <button
+                                        type="button"
+                                        className={cn(iconBtnClasses, "flex-shrink-0")}
+                                        aria-label={`Suggest edit for ${member.name}`}
+                                        title="Suggest Edit"
+                                      >
+                                        <PencilSimple size={14} weight="bold" aria-hidden="true" />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className={cn(
+                                          iconBtnClasses,
+                                          "flex-shrink-0 hover:bg-(--status-destructive-bg) hover:text-(--color-destructive)",
+                                        )}
+                                        aria-label={`Suggest deletion for ${member.name}`}
+                                        title="Suggest Deletion"
+                                      >
+                                        <Trash size={14} weight="bold" aria-hidden="true" />
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              </Table.Cell>
+                            </Table.Row>
+                          );
+                        })
+                      ) : (
+                        <Table.Row className="hover:bg-transparent hover:shadow-none">
+                          <Table.Cell
+                            colSpan={COLUMN_COUNT}
+                            className="py-12 text-center text-sm text-(--text-muted)"
+                          >
+                            No members match your search query.
+                          </Table.Cell>
+                        </Table.Row>
+                      )}
+                    </Table.Body>
+                  </Table>
+                </div>
+
+                {/* ── Pagination ── */}
+                <div className="mt-3 flex items-center justify-between px-1">
+                  <div className="text-xs tabular-nums text-(--text-muted)">
+                    {filteredMembers.length} of {members.length} members
+                  </div>
+                  {totalPages > 1 && (
+                    <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage}>
+                      <Pagination.Prev />
+                      <Pagination.Pages />
+                      <Pagination.Next />
+                    </Pagination>
+                  )}
+                </div>
+              </>
+            ) : (
+              /* ── Suggestions Tab ── */
+              <div className="overflow-hidden rounded-xl border border-(--border-subtle-plus) bg-(--bg-base) shadow-[var(--shadow-subtle)]">
                 <Table>
                   <Table.Header>
-                    <Table.Row className="hover:bg-transparent">
-                      <Table.Head className={cn(thClass, "w-20")}>
-                        ID
-                      </Table.Head>
-                      <Table.Head className={thClass}>Name</Table.Head>
-                      <Table.Head className={thClass}>Roles</Table.Head>
-                      <Table.Head className={thClass}>Gmail</Table.Head>
-                      <Table.Head className={cn(thClass, "w-28")}>
-                        Password
-                      </Table.Head>
-                      <Table.Head
-                        className={cn(thClass, "hidden xl:table-cell")}
-                      >
-                        Department
-                      </Table.Head>
-                      <Table.Head
-                        className={cn(
-                          thClass,
-                          "hidden lg:table-cell w-28"
-                        )}
-                      >
-                        Created
-                      </Table.Head>
-                      <Table.Head
-                        className={cn(thClass, "w-24 text-right")}
-                      >
-                        Actions
-                      </Table.Head>
+                    <Table.Row className="bg-(--bg-subtle)/60 hover:bg-(--bg-subtle)/60 hover:shadow-none">
+                      <Table.Head className="text-xs uppercase tracking-wider text-(--text-muted)">Type</Table.Head>
+                      <Table.Head className="text-xs uppercase tracking-wider text-(--text-muted)">Member</Table.Head>
+                      <Table.Head className="text-xs uppercase tracking-wider text-(--text-muted)">Title</Table.Head>
+                      <Table.Head className="text-xs uppercase tracking-wider text-(--text-muted)">Requester</Table.Head>
+                      <Table.Head className="text-xs uppercase tracking-wider text-(--text-muted)">Status</Table.Head>
+                      <Table.Head className="text-xs uppercase tracking-wider text-(--text-muted)">Created</Table.Head>
                     </Table.Row>
                   </Table.Header>
-
                   <Table.Body>
-                    {pagedMembers.map((member) => (
-                      <Table.Row key={member.id}>
-                        <Table.Cell className="font-mono text-xs tabular-nums text-(--text-muted)">
-                          {member.id}
-                        </Table.Cell>
-                        <Table.Cell>
-                          <div className="flex items-center gap-2.5">
-                            <Avatar name={member.name} />
-                            <span className="max-w-[150px] truncate text-sm font-medium text-(--text-primary)">
-                              {member.name}
-                            </span>
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <div className="flex flex-wrap gap-1">
-                            {member.roles.map((role) => (
-                              <Badge
-                                key={role}
-                                variant={roleBadgeVariant[role]}
-                              >
-                                {role}
-                              </Badge>
-                            ))}
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <MaskedCell
-                            value={member.gmail}
-                            label="email"
-                          />
-                        </Table.Cell>
-                        <Table.Cell>
-                          <MaskedCell
-                            value={member.password}
-                            label="password"
-                          />
-                        </Table.Cell>
-                        <Table.Cell className="hidden xl:table-cell">
-                          <Badge variant="neutral">
-                            {member.department}
-                          </Badge>
-                        </Table.Cell>
-                        <Table.Cell className="hidden lg:table-cell">
-                          <div className="tabular-nums text-sm text-(--text-muted)">
-                            <div>{formatDate(member.createdAt)}</div>
-                            <div className="text-xs text-(--text-subtle)">
-                              {formatTime(member.createdAt)}
+                    {INITIAL_SUGGESTIONS.length > 0 ? (
+                      INITIAL_SUGGESTIONS.map((suggestion) => (
+                        <Table.Row key={suggestion.id}>
+                          <Table.Cell>
+                            <Badge
+                              variant={
+                                suggestion.type === "Delete"
+                                  ? "destructive"
+                                  : suggestion.type === "Edit"
+                                    ? "warning"
+                                    : "success"
+                              }
+                            >
+                              {suggestion.type}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell className="font-medium text-(--text-primary)">
+                            {suggestion.memberName}
+                          </Table.Cell>
+                          <Table.Cell className="max-w-[240px] truncate text-(--text-muted)">
+                            {suggestion.title}
+                          </Table.Cell>
+                          <Table.Cell className="text-(--text-muted)">
+                            {suggestion.requester}
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Badge
+                              variant={
+                                suggestion.status === "Approved"
+                                  ? "success"
+                                  : suggestion.status === "Declined"
+                                    ? "destructive"
+                                    : suggestion.status === "In Review"
+                                      ? "warning"
+                                      : "info"
+                              }
+                            >
+                              {suggestion.status}
+                            </Badge>
+                          </Table.Cell>
+                          <Table.Cell className="whitespace-nowrap tabular-nums">
+                            <div className="flex flex-col">
+                              <span className="text-sm text-(--text-primary)">
+                                {formatDate(suggestion.createdAt).date}
+                              </span>
+                              <span className="text-xs text-(--text-muted)">
+                                {formatDate(suggestion.createdAt).time}
+                              </span>
                             </div>
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <div className="flex items-center justify-end gap-1">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setDialogState({
-                                  type: "edit",
-                                  member,
-                                })
-                              }
-                              aria-label={`Edit ${member.name}`}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-(--text-muted) transition-colors hover:bg-(--bg-subtle) hover:text-(--color-brand) focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none"
-                            >
-                              <PencilSimple
-                                size={16}
-                                aria-hidden="true"
-                              />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setDialogState({
-                                  type: "delete",
-                                  member,
-                                })
-                              }
-                              aria-label={`Delete ${member.name}`}
-                              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-(--text-muted) transition-colors hover:bg-(--status-destructive-bg) hover:text-(--color-destructive) focus-visible:shadow-[0_0_0_4px_var(--focus-ring-error)] focus-visible:outline-none"
-                            >
-                              <Trash size={16} aria-hidden="true" />
-                            </button>
-                          </div>
+                          </Table.Cell>
+                        </Table.Row>
+                      ))
+                    ) : (
+                      <Table.Row className="hover:bg-transparent hover:shadow-none">
+                        <Table.Cell
+                           colSpan={6}
+                           className="py-12 text-center text-sm text-(--text-muted)"
+                        >
+                           No suggestions pending.
                         </Table.Cell>
                       </Table.Row>
-                    ))}
+                    )}
                   </Table.Body>
                 </Table>
               </div>
+            )}
+          </div>
+        </main>
+      </div>
 
-              {totalPages > 1 && (
-                <div className="mt-4 flex justify-center">
-                  <Pagination
-                    currentPage={page}
-                    totalPages={totalPages}
-                    onPageChange={setPage}
-                  >
-                    <Pagination.Prev />
-                    <Pagination.Pages />
-                    <Pagination.Next />
-                  </Pagination>
-                </div>
-              )}
-            </>
-          )}
-        </Tabs.Panel>
-
-        {/* ── Suggestions Tab ─────────────────────────────────────── */}
-        <Tabs.Panel value="suggestions">
-          {suggestions.length === 0 ? (
-            <EmptyState
-              message="No Suggestions Yet"
-              description="Role suggestions from team leads will appear here."
-            />
-          ) : (
-            <div className="overflow-hidden rounded-xl border border-(--border-subtle)">
-              <Table>
-                <Table.Header>
-                  <Table.Row className="hover:bg-transparent">
-                    <Table.Head className={cn(thClass, "w-24")}>
-                      ID
-                    </Table.Head>
-                    <Table.Head className={cn(thClass, "w-20")}>
-                      Type
-                    </Table.Head>
-                    <Table.Head className={thClass}>Member</Table.Head>
-                    <Table.Head className={thClass}>Title</Table.Head>
-                    <Table.Head
-                      className={cn(thClass, "hidden md:table-cell")}
-                    >
-                      Department
-                    </Table.Head>
-                    <Table.Head className={cn(thClass, "w-24")}>
-                      Status
-                    </Table.Head>
-                    <Table.Head
-                      className={cn(
-                        thClass,
-                        "hidden lg:table-cell w-28"
-                      )}
-                    >
-                      Date
-                    </Table.Head>
-                    <Table.Head
-                      className={cn(thClass, "w-40 text-right")}
-                    >
-                      Actions
-                    </Table.Head>
-                  </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                  {suggestions.map((s) => (
-                    <Table.Row key={s.id}>
-                      <Table.Cell className="font-mono text-xs tabular-nums text-(--text-muted)">
-                        {s.id}
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge
-                          variant={
-                            s.type === "Delete"
-                              ? "destructive"
-                              : s.type === "Create"
-                                ? "success"
-                                : "brand"
-                          }
-                        >
-                          {s.type}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <div className="flex items-center gap-2.5">
-                          <Avatar name={s.memberName} />
-                          <span className="text-sm font-medium text-(--text-primary)">
-                            {s.memberName}
-                          </span>
-                        </div>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <span className="max-w-[200px] text-sm text-(--text-primary) line-clamp-1">
-                          {s.title}
-                        </span>
-                      </Table.Cell>
-                      <Table.Cell className="hidden md:table-cell">
-                        <Badge variant="neutral">{s.department}</Badge>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge variant={suggestionStatusVariant[s.status]}>
-                          {s.status}
-                        </Badge>
-                      </Table.Cell>
-                      <Table.Cell className="hidden lg:table-cell">
-                        <span className="text-sm tabular-nums text-(--text-muted)">
-                          {formatDate(s.createdAt)}
-                        </span>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <div className="flex items-center justify-end gap-1.5">
-                          {s.status !== "Approved" &&
-                            s.status !== "Declined" && (
-                              <>
-                                <Button
-                                  variant="primary"
-                                  size="sm"
-                                  className="h-7 px-2.5 text-xs"
-                                  onClick={() =>
-                                    handleSuggestionStatus(
-                                      s.id,
-                                      "Approved"
-                                    )
-                                  }
-                                >
-                                  Approve
-                                </Button>
-                                <Button
-                                  variant="secondary"
-                                  size="sm"
-                                  className="h-7 px-2.5 text-xs"
-                                  onClick={() =>
-                                    handleSuggestionStatus(
-                                      s.id,
-                                      "Declined"
-                                    )
-                                  }
-                                >
-                                  Decline
-                                </Button>
-                              </>
-                            )}
-                          {(s.status === "Approved" ||
-                            s.status === "Declined") && (
-                            <span className="text-xs italic text-(--text-subtle)">
-                              {s.status}
-                            </span>
-                          )}
-                        </div>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            </div>
-          )}
-        </Tabs.Panel>
-      </Tabs>
-
-      {/* Dialogs */}
+      {/* ── Dialogs ── */}
       <MemberFormDialog
-        open={
-          dialogState?.type === "create" || dialogState?.type === "edit"
-        }
-        onOpenChange={(open) => {
-          if (!open) setDialogState(null)
-        }}
-        editingMember={
-          dialogState?.type === "edit" ? dialogState.member : null
-        }
-        onSave={handleSave}
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        editingMember={editingMember}
+        onSave={handleSaveForm}
       />
-
       <DeleteDialog
-        open={dialogState?.type === "delete"}
-        onOpenChange={(open) => {
-          if (!open) setDialogState(null)
-        }}
-        memberName={
-          dialogState?.type === "delete" ? dialogState.member.name : ""
-        }
-        onConfirm={handleDelete}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        memberName={deletingMember?.name ?? ""}
+        onConfirm={handleConfirmDelete}
       />
-    </>
-  )
+    </div>
+  );
 }
