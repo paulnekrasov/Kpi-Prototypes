@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Deprecated local GSD commands/templates
+
+This repository previously shipped a local "Get Shit Done" (GSD) distribution under:
+
+- `.claude/get-shit-done/**` (templates, references, VERSION, etc.)
+- `.claude/commands/gsd/*` (command definitions)
+
+Those assets and commands have been removed from this repo and are no longer maintained here. Any onboarding docs, automations, or tooling that assumed these paths exist will break unless updated.
+
+If you still rely on the old local GSD setup, you should either:
+
+- Restore the required files from your Git history into a separate, project-specific location, and update your tooling to point there; or
+- Update your onboarding/docs/automation to use the new, centralized GSD distribution (if your team maintains one), and document that location in your own README/process docs.
+
+New contributions to this repo should not depend on `.claude/get-shit-done/**` or `.claude/commands/gsd/*` being present.
+
 ## Commands
 
 ```bash
@@ -122,6 +138,8 @@ These rules define how to translate Figma inputs into code for this project. Fol
 
 ### Radix UI + shadcn Authoring Pattern
 
+> **UI stack & version policy:** The canonical Radix UI and shadcn/ui versions in use are pinned in `package.json` at the workspace/prototype root. Always check `package.json` before assuming a version — do not upgrade Radix or shadcn/ui packages without updating this guidance to reflect any breaking API changes.
+
 **shadcn/ui is built on top of Radix UI** — they are not two separate things. Radix provides headless, unstyled behavior primitives (`@radix-ui/react-dialog`, `@radix-ui/react-slot`, etc.); shadcn is a set of copy-paste components that wrap those primitives with Tailwind styling and authoring conventions. When we say "use Radix/shadcn patterns" we mean: use Radix primitives for behavior, and follow shadcn's structural conventions (`asChild`, `cn()`, `data-slot`, compound components).
 
 **Radix is the behavioral foundation — never the visual replacement.**
@@ -183,7 +201,7 @@ These rules define how to translate Figma inputs into code for this project. Fol
 - IMPORTANT: For all Next.js-specific patterns (App Router, RSC, data fetching, file conventions), always consult `.claude/skills/next-best-practices/`
 - IMPORTANT: For all UI decisions (accessibility, layout, interactions, responsiveness), always consult `.claude/skills/web-interface-guidelines/`
 - IMPORTANT: For all animations, transitions, micro-interactions, easing, hover states, entrance/exit patterns, delight moments, UI polish, or "this feels off" problems, always consult `.claude/skills/design-engineering-skill/` — this is the baseline for motion and tactile quality in this project
-- IMPORTANT: For all debugging tasks, use `.claude/get-shit-done/templates/DEBUG.md` as the session template — create a debug file at `.planning/debug/[slug].md` and follow the lifecycle defined there
+- IMPORTANT: For all debugging tasks, create a debug file at `.planning/debug/[slug].md` documenting the problem, hypothesis, steps taken, and resolution — the GSD debug template has been removed from this repo (see "Deprecated local GSD commands/templates" above)
 
 ### What Not to Do
 
