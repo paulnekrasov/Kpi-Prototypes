@@ -23,7 +23,6 @@ import {
   CaretUp,
   CaretDown,
 } from "@phosphor-icons/react";
-import { InputGroup } from "@components/ui/InputGroup";
 import { Badge } from "@components/ui/Badge";
 import { Pagination } from "@components/ui/pagination";
 import { Table } from "@components/layout/table";
@@ -37,7 +36,6 @@ import {
   INITIAL_MEMBERS,
   INITIAL_SUGGESTIONS,
   type Member,
-  type MemberRole,
   type ViewerRole,
 } from "./roles-data";
 
@@ -83,6 +81,17 @@ export default function RolesPage() {
   const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState<Member | null>(null);
+
+  // ── Force light mode for this page ──
+  useEffect(() => {
+    const html = document.documentElement;
+    const prev = html.getAttribute("data-theme");
+    html.setAttribute("data-theme", "light");
+    return () => {
+      if (prev) html.setAttribute("data-theme", prev);
+      else html.removeAttribute("data-theme");
+    };
+  }, []);
 
   const isPrivileged = currentUserRole === "Owner" || currentUserRole === "Admin";
   const suggestionCount = INITIAL_SUGGESTIONS.filter(
@@ -180,10 +189,10 @@ export default function RolesPage() {
 
   // ── Button styles (shared) ──
   const iconBtnClasses =
-    "inline-flex h-8 w-8 items-center justify-center rounded-lg text-(--text-muted) transition-[color,background-color,transform] duration-150 hover:duration-0 ease-out hover:bg-(--bg-subtle) hover:text-(--text-primary) active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100";
+    "inline-flex h-9 w-9 items-center justify-center rounded-lg text-(--text-muted) transition-[color,background-color,transform] duration-150 hover:duration-0 ease-out hover:bg-(--bg-subtle) hover:text-(--text-primary) active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100";
 
   return (
-    <div className="flex min-h-screen bg-(--bg-subtle)">
+    <div className="flex min-h-screen min-h-dvh bg-(--bg-subtle)">
       {/* ── Sidebar ── */}
       <div className="flex border-r border-(--border-subtle-plus) flex-shrink-0">
         <Sidebar defaultCollapsed={false}>
@@ -254,51 +263,14 @@ export default function RolesPage() {
       {/* ── Main Content ── */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* ── Header ── */}
-        <header className="border-b border-(--border-subtle-plus) bg-(--bg-subtle) px-6 py-8">
+        <header className="border-b border-(--border-subtle-plus) bg-(--bg-base) px-8 pt-8 pb-6">
           <div className="mx-auto w-full max-w-[1440px]">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <nav className="mb-2 flex items-center gap-2 text-xs font-medium text-(--text-muted)">
-                  <span>Admin</span>
-                  <span className="opacity-40">/</span>
-                  <span className="text-(--text-primary)">Roles</span>
-                </nav>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold tracking-tight text-(--text-primary)">Roles</h1>
-                  <Badge variant="gray" className="rounded-full bg-(--bg-subtle-plus) px-2 py-0.5 text-[10px] font-bold">
-                    {filteredMembers.length}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* ── RBAC Role Switcher (dev tool) ── */}
-              <div className="flex flex-col items-end gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-(--text-subtle)">
-                  Viewing as:
-                </span>
-                <div className="flex items-center gap-1 rounded-lg border border-(--border-subtle) bg-(--bg-base) p-1 shadow-sm">
-                  {(["Owner", "Admin", "Moderator"] as const).map((role) => (
-                    <button
-                      key={role}
-                      type="button"
-                      onClick={() => setCurrentUserRole(role)}
-                      className={cn(
-                        "rounded-md px-3 py-1 text-xs font-semibold transition-all duration-150 active:scale-[0.97]",
-                        currentUserRole === role
-                          ? "bg-(--color-brand) text-(--text-on-accent) shadow-md"
-                          : "text-(--text-muted) hover:bg-(--bg-subtle) hover:text-(--text-primary)",
-                      )}
-                    >
-                      {role}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <h1 className="font-family-(--font-display) text-2xl font-bold tracking-tight text-(--text-primary) text-wrap-balance">Roles</h1>
+            <p className="mt-1.5 text-sm text-(--text-muted)">{members.length} members across your organization</p>
           </div>
         </header>
 
-        <main id="main-content" className="flex-1 overflow-x-hidden bg-(--bg-base) p-6">
+        <main id="main-content" className="flex-1 overflow-x-hidden bg-(--bg-base) px-8 py-6">
           <div className="mx-auto w-full max-w-[1440px] space-y-6">
             {/* ── Tabs & Action Bar Header ── */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -342,7 +314,7 @@ export default function RolesPage() {
               {/* ── Action Bar ── */}
               {activeTab === "members" && (
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="relative flex min-w-[320px] max-w-md items-center h-10">
+                  <div className="relative flex min-w-[280px] max-w-md flex-1 items-center h-10 sm:min-w-[320px] sm:flex-none">
                     <div className="absolute left-3.5 z-10 pointer-events-none opacity-50">
                       <MagnifyingGlass size={16} weight="bold" />
                     </div>
@@ -352,15 +324,16 @@ export default function RolesPage() {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search by name, ID, or email..."
+                      aria-label="Search members by name, ID, or email"
                       autoComplete="off"
-                      className="h-full w-full rounded-lg border border-(--border-subtle) bg-(--bg-base) pl-10 pr-4 text-sm font-medium text-(--text-primary) placeholder:text-(--text-muted) focus:border-(--color-brand) focus:outline-none focus:ring-4 focus:ring-(--focus-ring) transition-all"
+                      className="h-full w-full rounded-lg border border-(--border-subtle) bg-(--bg-base) pl-10 pr-4 text-sm font-medium text-(--text-primary) placeholder:text-(--text-subtle) focus:border-(--color-brand) focus:outline-none focus:ring-4 focus:ring-(--focus-ring) transition-[border-color,box-shadow] duration-150 ease-out"
                     />
                   </div>
 
                   {/* Filter */}
                   <button
                     type="button"
-                    className="inline-flex h-10 items-center gap-2 rounded-lg border border-(--border-subtle) bg-(--bg-base) px-3 py-2 text-sm font-semibold text-(--text-muted) transition-all hover:bg-(--bg-subtle) hover:text-(--text-primary) active:scale-[0.97]"
+                    className="inline-flex h-10 items-center gap-2 rounded-lg border border-(--border-subtle) bg-(--bg-base) px-3 py-2 text-sm font-semibold text-(--text-muted) transition-[color,background-color,border-color,transform] duration-150 hover:duration-0 ease-out hover:bg-(--bg-subtle) hover:text-(--text-primary) active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100"
                   >
                     <Funnel size={16} weight="bold" aria-hidden="true" />
                     <span>Filter</span>
@@ -374,7 +347,7 @@ export default function RolesPage() {
                     <button
                       type="button"
                       onClick={handleAddMember}
-                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-(--color-brand) px-4 py-2 text-sm font-bold text-(--text-on-accent) shadow-lg shadow-(--color-brand)/20 transition-all hover:translate-y-[-1px] active:scale-[0.97]"
+                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-(--color-brand) px-4 py-2 text-sm font-bold text-(--text-on-accent) shadow-[var(--shadow-btn-primary)] transition-[transform,box-shadow] duration-150 hover:duration-0 ease-out hover:translate-y-[-1px] hover:shadow-[var(--shadow-btn-primary-hover)] active:scale-[0.97] active:shadow-[var(--shadow-btn-primary-pressed)] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0"
                     >
                       <Plus size={16} weight="bold" aria-hidden="true" />
                       Add member
@@ -382,7 +355,7 @@ export default function RolesPage() {
                   ) : (
                     <button
                       type="button"
-                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-amber-500/20 transition-all hover:translate-y-[-1px] active:scale-[0.97]"
+                      className="inline-flex h-10 items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-amber-500/20 transition-[transform,box-shadow] duration-150 hover:duration-0 ease-out hover:translate-y-[-1px] active:scale-[0.97] focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] focus-visible:outline-none motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0"
                     >
                       <LightbulbFilament size={16} weight="bold" aria-hidden="true" />
                       Suggest member
@@ -435,7 +408,7 @@ export default function RolesPage() {
                               {/* Name & Surname */}
                               <Table.Cell>
                                 <div className="flex items-center gap-3">
-                                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-(--color-brand)/10 text-xs font-semibold text-(--color-brand)">
+                                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--color-brand)/10 text-[11px] font-bold text-(--color-brand)">
                                     {member.name
                                       .split(" ")
                                       .map((n) => n[0])
@@ -453,13 +426,15 @@ export default function RolesPage() {
                               <Table.Cell>
                                 <div className="flex flex-wrap gap-2">
                                   {member.roles.map((role) => (
-                                    <Badge 
-                                      key={role} 
+                                    <Badge
+                                      key={role}
                                       variant="outline"
                                       className={cn(
-                                        "rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
-                                        role === "Owner" ? "border-amber-200 bg-amber-50 text-amber-700" :
-                                        role === "Admin" ? "border-indigo-200 bg-indigo-50 text-indigo-700" :
+                                        "rounded-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-xs",
+                                        role === "Owner" ? "border-amber-300/60 bg-amber-50 text-amber-700" :
+                                        role === "Admin" ? "border-indigo-300/60 bg-indigo-50 text-indigo-700" :
+                                        role === "Moderator" ? "border-violet-300/60 bg-violet-50 text-violet-700" :
+                                        role === "Media Rep" ? "border-sky-300/60 bg-sky-50 text-sky-700" :
                                         "border-(--border-subtle) bg-(--bg-subtle) text-(--text-muted)"
                                       )}
                                     >
@@ -602,8 +577,8 @@ export default function RolesPage() {
                 </div>
 
                 {/* ── Pagination ── */}
-                <div className="mt-2 flex items-center justify-between px-1">
-                  <div className="text-xs text-(--text-muted)">
+                <div className="mt-3 flex items-center justify-between px-1">
+                  <div className="text-xs tabular-nums text-(--text-muted)">
                     {filteredMembers.length} of {members.length} members
                   </div>
                   {totalPages > 1 && (

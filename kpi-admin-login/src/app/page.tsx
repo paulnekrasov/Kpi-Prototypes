@@ -96,14 +96,6 @@ export default function Home() {
           <form className="login-container" onSubmit={handleSubmit}>
             <h1 className="headline">ПАНЕЛЬ СР КПІ</h1>
 
-            <Link
-              href="/shadcn-card-preview"
-              className="btn-secondary"
-              style={{ marginBottom: 16, width: "fit-content" }}
-            >
-              Open shadcn card preview
-            </Link>
-
             <InputGroup
               ref={emailRef}
               label="Електронна пошта"

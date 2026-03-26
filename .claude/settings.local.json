@@ -8,7 +8,9 @@
       "Bash(node -e \"const p = require\\(''@phosphor-icons/react''\\); console.log\\(''House:'', typeof p.House, ''Users:'', typeof p.Users, ''Funnel:'', typeof p.Funnel, ''LightbulbFilament:'', typeof p.LightbulbFilament\\)\")",
       "WebSearch",
       "WebFetch(domain:ui.shadcn.com)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(find /c/Users/Asus/OneDrive/Desktop/prototypes/kpi-admin-login -maxdepth 3 -name tokens.css -o -name *.css -type f)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

@@ -24,7 +24,7 @@ export function BackNavigation() {
     if (!showBack) return null;
 
     return (
-        <Link href={backHref} className="btn-back">
+        <Link href={backHref} className="btn-secondary" style={{ width: "fit-content" }}>
             <ArrowLeft size={24} weight="bold" aria-hidden="true" />
             Назад
         </Link>
