@@ -27,6 +27,9 @@
       "@/*": [
         "./src/*"
       ],
+      "@admin-panel/*": [
+        "../admin-panel/*"
+      ],
       "@components/*": [
         "../components/*"
       ],
@@ -63,6 +66,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "../admin-panel/**/*.ts",
+    "../admin-panel/**/*.tsx",
     "../components/**/*.ts",
     "../components/**/*.tsx",
     "../styles/**/*.css",

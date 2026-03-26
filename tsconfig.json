@@ -6,6 +6,9 @@
       "@/*": [
         "./kpi-admin-login/src/*"
       ],
+      "@admin-panel/*": [
+        "./admin-panel/*"
+      ],
       "@components/*": [
         "./components/*"
       ],
