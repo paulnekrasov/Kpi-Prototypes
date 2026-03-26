@@ -39,11 +39,22 @@ The app lives in a monorepo where components and styles are shared across multip
 
 ```
 /prototypes/
-├── kpi-admin-login/    ← this app (src/app/)
-├── kpi-site/
-├── admin-panel/
-├── components/         ← shared: Layout, UI, Providers
-└── styles/             ← shared: tokens.css (design tokens)
+├── kpi-admin-login/        ← auth UI prototype (login → forgot → reset)
+│   └── src/app/            ← page.tsx, layout.tsx, forgot-password/, check-email/, new-password/
+├── kpi-site/               ← marketing/public site
+│   └── src/app/            ← page.tsx, layout.tsx, not-found.tsx
+├── admin-panel/            ← admin dashboard (removed — pages cleaned up)
+│   └── src/app/            ← layout.tsx, analytics/, owner-admin-moderator/, media/
+├── components/             ← shared across all prototypes
+│   ├── layout/             ← Header.tsx, BackNavigation.tsx, Logo.tsx, sidebar.tsx, dashboard-shell.tsx, table.tsx
+│   ├── ui/                 ← InputGroup.tsx, Button.tsx, IconButton.tsx, Badge.tsx, Card.tsx, Dialog.tsx, Tabs.tsx, sidebar-tab.tsx, pagination.tsx
+│   ├── providers/          ← Providers.tsx, ThemeToggle.tsx
+│   └── utils/              ← cn.ts (class merging utility)
+├── styles/                 ← shared: tokens.css (design tokens — colors, spacing, shadows, transitions)
+├── images/                 ← Logo.svg, new_logo.svg, logo-animation/ (Vite/Three.js logo prototype)
+├── docs/                   ← user flow docs, animation references, implementation plans
+├── skills-lock.json
+└── tsconfig.json           ← root tsconfig with shared path aliases
 ```
 
 Path aliases (via tsconfig.json):
@@ -77,7 +88,7 @@ Color roles: `--color-brand` (blue), `--color-destructive` (red), `--color-succe
 - **Form validation:** Client-side only, inline errors, validated on blur and change, focus jumps to first error on submit. Error state: shake the input 3–5px horizontally (never 20px) at 300ms ease-out + red border at 150ms ease-out. See `design-engineering-skill/references/micro-interactions.md`
 - **Password strength meter** (`/new-password`): Checks 4 criteria (length, lowercase, uppercase, digit); animated bar + contextual hint showing only the first unmet requirement
 - **Accessibility:** Every interactive element has a visible label, `aria-live="polite"` on status messages, skip-to-content link, keyboard-navigable. Follow `../AGENTS.md` for all UX/accessibility decisions.
-- **Motion:** Password strength transitions are disabled when `prefers-reduced-motion` is active. For all animation decisions (easing, duration, micro-interactions, entrance/exit patterns, delight states, jank fixes), consult `.claude/skills/design-engineering-skill/`
+- **Motion:** Password strength transitions are disabled when `prefers-reduced-motion` is active. For all animation decisions (easing, duration, micro-interactions, entrance/exit patterns, delight states, jank fixes), start with `.claude/skills/design-engineering-skill/SKILL.md` — it has instant easing/duration answers and a "Something Feels Wrong" diagnostic for most common cases
 - **Responsive:** Mobile-first; layout shifts from split (logo left, form right) to stacked at ≤810px
 
 ### Shared Components (../components/)
@@ -198,10 +209,63 @@ These rules define how to translate Figma inputs into code for this project. Fol
 ### Development Standards
 
 - IMPORTANT: For all React/Next.js code, always consult `.claude/skills/vercel-react-best-practices/` before writing or reviewing components
-- IMPORTANT: For all Next.js-specific patterns (App Router, RSC, data fetching, file conventions), always consult `.claude/skills/next-best-practices/`
+- IMPORTANT: For all Next.js-specific patterns, consult `.claude/skills/next-best-practices/` — open the specific sub-file that matches the trigger:
+
+  | Trigger / Task | Sub-file |
+  |---|---|
+  | App Router special files (`page.tsx`, `layout.tsx`, `error.tsx`, `route.ts`, `default.tsx`) | `file-conventions.md` |
+  | `'use client'` + `async function`, or passing non-plain props server→client | `rsc-boundaries.md` |
+  | `params`, `searchParams`, `cookies()`, `headers()` access (Next.js 15+) | `async-patterns.md` |
+  | Adding or auditing `'use client'` / `'use server'` / `'use cache'` | `directives.md` |
+  | `useRouter`, `usePathname`, `useSearchParams`, `generateStaticParams`, `generateMetadata` | `functions.md` |
+  | `error.tsx`, `not-found.tsx`, `redirect()`, `notFound()`, `forbidden()`, `unauthorized()` | `error-handling.md` |
+  | Deciding where/how to fetch data; preventing sequential waterfalls | `data-patterns.md` |
+  | Creating `route.ts` API endpoint | `route-handlers.md` |
+  | `metadata` export, `generateMetadata`, OG image generation | `metadata.md` |
+  | Any `<img>` tag or image import | `image.md` |
+  | Font loading, `next/font`, `@import` fonts | `font.md` |
+  | `window is not defined`, `require() of ES Module`, dynamic imports, `ssr: false` | `bundling.md` |
+  | Third-party `<script>` tags, Google Analytics / GTM | `scripts.md` |
+  | "Hydration failed" / server-client HTML mismatch | `hydration-error.md` |
+  | `useSearchParams` or `usePathname` without Suspense wrapper | `suspense-boundaries.md` |
+  | `@slot` parallel routes, intercepting routes `(.)`, modal patterns | `parallel-routes.md` |
+  | `export const runtime = 'edge'` | `runtime-selection.md` |
+  | Docker, standalone output (`output: 'standalone'`), multi-instance ISR | `self-hosting.md` |
+  | Next.js build errors, `/_next/mcp` dev endpoint, `--debug-build-paths` | `debug-tricks.md` |
 - IMPORTANT: For all UI decisions (accessibility, layout, interactions, responsiveness), always consult `.claude/skills/web-interface-guidelines/`
-- IMPORTANT: For all animations, transitions, micro-interactions, easing, hover states, entrance/exit patterns, delight moments, UI polish, or "this feels off" problems, always consult `.claude/skills/design-engineering-skill/` — this is the baseline for motion and tactile quality in this project
-- IMPORTANT: For all debugging tasks, create a debug file at `.planning/debug/[slug].md` documenting the problem, hypothesis, steps taken, and resolution — the GSD debug template has been removed from this repo (see "Deprecated local GSD commands/templates" above)
+- IMPORTANT: For all animations, transitions, micro-interactions, easing, hover states, entrance/exit patterns, delight moments, UI polish, or "this feels off" problems, start with `.claude/skills/design-engineering-skill/SKILL.md` — it contains the 4 easing questions, duration table, 7 instant wins, and a "Something Feels Wrong" diagnostic you can apply immediately. Then open the specific sub-file:
+
+  | Trigger / Task | Sub-file |
+  |---|---|
+  | Choosing easing, duration, CSS vs. spring | `references/web-animations.md` |
+  | Button states, hover/press, toggle, checkbox, icon swap, form validation, loading | `references/micro-interactions.md` |
+  | Modal, toast, dropdown, sidebar, list add/remove, page transition | `references/entrance-exit-patterns.md` |
+  | Success state, confetti, like button, achievement unlock, onboarding milestone | `references/joy-delight.md` |
+  | Choppy/janky animation, frame drops, Safari blur lag, layout thrashing | `references/performance-diagnosis.md` |
+  | Animation "feels off" but you can't name why — use Disney principles to diagnose | `references/disney-12-principles.md` |
+  | Text wrapping, concentric radius, shadow vs. border, tabular nums, stagger | `references/make-interfaces-feel-better.md` |
+  | clip-path reveals, tabs transition, interruptibility, motion cohesion | `references/userinterface-wiki.md` |
+  | Hover flicker, wrong transform-origin, tooltip group delay, blur trick | `references/web-animations/practical-tips.md` |
+- IMPORTANT: For ALL debugging tasks (bugs, test failures, unexpected behavior, build errors, performance problems), use `.claude/skills/systematic-debugging/SKILL.md`. **The Iron Law: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST. You cannot propose fixes before completing Phase 1.**
+
+  **4 mandatory phases — complete each before proceeding:**
+  1. **Root Cause** — read the full error/stack trace, reproduce consistently, check recent changes (`git diff`), trace the bad value upstream to where it originates (not where it surfaces)
+  2. **Pattern** — find working similar code in the codebase, compare against broken, list every difference (none are too small)
+  3. **Hypothesis** — state ONE specific theory ("X because Y"), make the smallest possible change to test it; one variable at a time
+  4. **Implementation** — create a failing test first, implement ONE fix, verify. If 3+ fixes have failed → stop, question the architecture, discuss before attempting more
+
+  **Stop and return to Phase 1 if you catch yourself thinking:**
+  - "Quick fix for now, investigate later"
+  - "It's probably X, let me just try it"
+  - "One more attempt" (when 2+ fixes already failed)
+  - Proposing solutions before tracing where the bad value originated
+
+  **Supporting sub-files:**
+  | Trigger | Sub-file |
+  |---|---|
+  | Error surfaces deep in the call stack — unclear where bad data came from | `root-cause-tracing.md` |
+  | Root cause found — want to prevent the bug from being possible again | `defense-in-depth.md` |
+  | Tests use `setTimeout`/`sleep` and are flaky or fail under load | `condition-based-waiting.md` |
 
 ### What Not to Do
 

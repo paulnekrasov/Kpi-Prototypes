@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "a27721963f8accdc693a55cf9f5cf41008d9b60b0af08ab030e5c8b2c030befd"
     },
+    "next-best-practices": {
+      "source": "vercel-labs/next-skills",
+      "sourceType": "github",
+      "computedHash": "c31ddd68ba5798a79a516c619b1e1fc4408cc4876ad600fefa4f5add4425719d"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",
