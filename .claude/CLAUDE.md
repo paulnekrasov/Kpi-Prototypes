@@ -92,8 +92,6 @@ Every `<input>` in this project is part of an authentication flow — these rule
 - Enter key submits the focused form; in `<textarea>`, use ⌘/Ctrl+Enter to submit
 - Accept free text first, validate after — never block typing in real-time
 - Allow incomplete form submission to surface all validation errors at once
-- Warn before navigation if the form has unsaved changes
-- Ensure compatibility with password managers and 2FA autofill — never interfere with browser autofill popups
 
 ### Hit Targets & Touch
 
@@ -107,10 +105,7 @@ Every `<input>` in this project is part of an authentication flow — these rule
 - Text containers must handle overflow: use `truncate`, `line-clamp-*`, or `break-words` depending on context
 - Flex children need `min-w-0` to allow text truncation (without it, flex items refuse to shrink below content width)
 - Handle empty states — no broken UI for empty strings, null values, or empty arrays; show a helpful message + next action
-- Design for all content states: empty, sparse (1–2 items), dense (many items), and error
 - Use the `…` ellipsis character (U+2026), not three dots `...`
-- Non-breaking spaces for units and shortcuts: `10&nbsp;MB`, `⌘&nbsp;K`, brand names that shouldn't wrap mid-word
-- Skeletons and loading placeholders must mirror the final content's shape and size to prevent layout shift
 - Components must be resilient to user-generated content: test with very short, average, and very long strings
 
 ### URL State & Navigation
@@ -219,12 +214,7 @@ These rules define how to translate Figma inputs into code for this project. Fol
 These extend the motion rules in Key Patterns and Component Patterns:
 
 - Never use `transition: all` — always list properties explicitly (e.g. `transition: transform 0.2s ease-out, opacity 0.2s ease-out`); `all` causes unexpected transitions on properties you didn't intend and can trigger expensive reflows
-- Set correct `transform-origin` — motion must start from where it "physically" should: a dropdown grows from its trigger, a tooltip from its anchor point, a modal from the button that opened it
 - Exit animations should be shorter than enter (~60–70% of enter duration) — exiting content is less important; users want it gone fast
-- Stagger list/grid item entrance by 30–50ms per item — all-at-once feels like a flash; too-slow (>80ms) feels sluggish
-- Animations must never block user input — the UI stays interactive at all times; never disable scrolling or clicks during an animation
-- Use crossfade (`opacity` swap) for content replacement within the same container — never hard-swap visible content without transition
-- SVG transforms: apply on a `<g>` wrapper with `transform-box: fill-box` for correct coordinate space
 
 ### Feedback & Destructive Actions
 
@@ -256,21 +246,11 @@ These extend the motion rules in Key Patterns and Component Patterns:
 
 ### Accessibility Requirements
 
-- Every interactive element must have a visible label or `aria-label`
-- Status/error messages must use `aria-live="polite"` or `aria-describedby`
-- Focus styles must use `focus-visible` (not `focus`) with `var(--focus-ring)`
-- Respect `prefers-reduced-motion` — replace directional/spatial motion with an opacity fade; do not simply remove the animation entirely, as this removes state-change communication. Use `useReducedMotion()` from Framer Motion when applicable
-- Use semantic HTML: native `<button>`, `<input>`, `<form>`, `<nav>`, `<main>`, etc.
-- Full keyboard support per WAI-ARIA APG patterns — tab order matches visual order, all interactive elements reachable
-- Focus management: trap focus in modals/drawers, return focus to trigger on close, move focus to first error on form submit
-- `overscroll-behavior: contain` on modals and drawers — prevents scroll from leaking to the background page
-- During drag operations, disable text selection (`user-select: none`) and set `inert` on the dragged element's original position
-- `scroll-margin-top` on anchor targets and headings — prevents fixed headers from covering scrolled-to content
-- Never use `user-scalable=no` or `maximum-scale=1` — this disables zoom for users who need it
-- Color must never be the sole indicator of state — always pair with an icon, text label, or pattern (e.g. error = red + icon + message text)
-- Prefer native semantics (`<button>`, `<a>`, `<label>`, `<table>`) before resorting to ARIA roles — ARIA is a last resort, not a first choice
-- `<title>` must reflect the current page context (e.g. "Forgot Password — KPI" not just "KPI")
-- Heading hierarchy: sequential `<h1>` → `<h6>`, never skip levels
+- Focus styles must use `focus-visible` with `var(--focus-ring)` — never `outline: none` without replacement
+- `prefers-reduced-motion`: replace directional motion with opacity fade, do not remove entirely
+- Move focus to first error on form submit; return focus to trigger on modal close
+- `<title>` format: "Forgot Password — KPI" not just "KPI"
+- IMPORTANT: For all accessibility decisions, consult `.claude/skills/accessibility-engineering/SKILL.md`
 
 ### Asset Handling
 
@@ -319,39 +299,11 @@ These extend the motion rules in Key Patterns and Component Patterns:
   | Text wrapping, concentric radius, shadow vs. border, tabular nums, stagger | `references/make-interfaces-feel-better.md` |
   | clip-path reveals, tabs transition, interruptibility, motion cohesion | `references/userinterface-wiki.md` |
   | Hover flicker, wrong transform-origin, tooltip group delay, blur trick | `references/web-animations/practical-tips.md` |
-- IMPORTANT: For ALL debugging tasks (bugs, test failures, unexpected behavior, build errors, performance problems), use `.claude/skills/systematic-debugging/SKILL.md`. **The Iron Law: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST. You cannot propose fixes before completing Phase 1.**
-
-  **4 mandatory phases — complete each before proceeding:**
-  1. **Root Cause** — read the full error/stack trace, reproduce consistently, check recent changes (`git diff`), trace the bad value upstream to where it originates (not where it surfaces)
-  2. **Pattern** — find working similar code in the codebase, compare against broken, list every difference (none are too small)
-  3. **Hypothesis** — state ONE specific theory ("X because Y"), make the smallest possible change to test it; one variable at a time
-  4. **Implementation** — create a failing test first, implement ONE fix, verify. If 3+ fixes have failed → stop, question the architecture, discuss before attempting more
-
-  **Stop and return to Phase 1 if you catch yourself thinking:**
-  - "Quick fix for now, investigate later"
-  - "It's probably X, let me just try it"
-  - "One more attempt" (when 2+ fixes already failed)
-  - Proposing solutions before tracing where the bad value originated
-
-  **Supporting sub-files:**
-  | Trigger | Sub-file |
-  |---|---|
-  | Error surfaces deep in the call stack — unclear where bad data came from | `root-cause-tracing.md` |
-  | Root cause found — want to prevent the bug from being possible again | `defense-in-depth.md` |
-  | Tests use `setTimeout`/`sleep` and are flaky or fail under load | `condition-based-waiting.md` |
+- IMPORTANT: For ALL debugging tasks (bugs, test failures, unexpected behavior, build errors, performance problems), use `.claude/skills/systematic-debugging/SKILL.md`. **Iron Law: NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.** Follow the 4-phase approach (Root Cause → Pattern → Hypothesis → Implementation) defined in that file.
 
 ### Performance Baseline
 
 - Explicit `width` and `height` (or `aspect-ratio`) on all `<img>` elements — prevents Cumulative Layout Shift (CLS target: <0.1)
-- Preload above-fold images and hero assets; lazy-load everything below the fold with `loading="lazy"`
-- Virtualize lists with >50 items — rendering hundreds of DOM nodes kills scroll performance; use `react-window` or similar
-- Batch DOM layout reads then writes — never interleave reads and writes in a loop (causes layout thrashing / forced synchronous reflow)
-- Prefer `flex`/`grid` CSS layout over JavaScript measurement — JS-based layout causes reflows and is fragile across resize
-- Skeletons and loading placeholders must mirror the final content's shape and dimensions to prevent layout shift on load
-- `font-display: swap` on custom fonts — prevents invisible text (FOIT) during font load; fonts are already loaded globally via `layout.tsx`
-- `<link rel="preconnect">` for external CDN domains used for fonts or assets
-- Split code by route/feature — use Next.js dynamic imports and React Suspense for non-critical components
-- Load third-party scripts with `async` or `defer`; audit and remove unused ones
 - Debounce/throttle high-frequency events: scroll, resize, input (e.g. password strength check should debounce, not fire per keystroke)
 - Prefer uncontrolled inputs (`defaultValue`) when you don't need per-keystroke state; controlled inputs must be cheap per keystroke
 
@@ -386,57 +338,6 @@ These rules apply when building navigation structures — tabs, sidebars, bottom
 - Dangerous actions (delete account, logout) must be visually and spatially separated from normal navigation items
 - Navigation items with pending state (unread count, notifications) use badges sparingly — clear the badge after the user visits
 - When a navigation destination is unavailable, explain why with a message instead of silently hiding the item
-
-### Charts & Data Visualization
-
-Follow these rules when implementing dashboards, analytics views, or any data-driven UI — including when translating chart designs from Figma or building with shadcn chart components.
-
-#### Chart Selection
-
-| Data relationship | Recommended chart type |
-|---|---|
-| Trend over time | Line chart |
-| Comparison between categories | Bar chart (vertical or horizontal) |
-| Part-to-whole proportion | Pie/donut (≤5 categories only) |
-| Distribution | Histogram, box plot |
-| Correlation | Scatter plot |
-| Flow/funnel | Funnel chart |
-| Hierarchy | Treemap |
-
-- Avoid pie/donut charts for >5 categories — switch to a bar chart for clarity
-- For 1000+ data points, aggregate or sample; provide drill-down for detail
-
-#### Visual Rules
-
-- Always show a legend; position it near the chart, not detached below a scroll fold
-- Label axes with units and readable scale; avoid truncated or rotated labels on mobile
-- Grid lines should be low-contrast (e.g. `var(--border-subtle)`) so they don't compete with data
-- Data lines/bars vs. background: ≥3:1 contrast ratio; data text labels: ≥4.5:1
-- Use accessible color palettes — never rely on red/green pairs alone for colorblind users; supplement color with patterns, textures, or shape
-- Direct label values on the chart for small datasets to reduce eye travel to the legend
-- Emphasize data trends over decoration — avoid heavy gradients/shadows that obscure the data
-- Number formatting: use locale-aware formatting via `Intl.NumberFormat` and `Intl.DateTimeFormat` for axes and labels
-
-#### Interaction
-
-- Tooltips on hover (desktop) and tap (mobile) showing exact values — tooltips must also be keyboard-reachable (not hover-only)
-- Legends should be interactive: click to toggle series visibility
-- Chart entrance animations must respect `prefers-reduced-motion`; data must be immediately readable even without animation
-- Interactive chart elements (points, bars, slices) must have ≥44px tap area on mobile, or expand on touch
-- Interactive chart elements must be keyboard-navigable with visible focus indicators
-
-#### States
-
-- Empty data: show a meaningful message ("No data yet") with guidance or a CTA — never show a blank chart frame
-- Loading: use a skeleton or shimmer placeholder that matches the chart shape; don't show empty axis frames
-- Error: show an error message with a retry action, not a broken/empty chart
-- Provide a `<table>` alternative for screen readers — charts alone are not accessible
-
-#### Responsive
-
-- Charts must reflow or simplify on small screens (e.g. horizontal bar instead of vertical, fewer tick marks)
-- Axis ticks must not be cramped; auto-skip labels on small viewports to maintain readability
-- Limit information density per chart to avoid cognitive overload; split into multiple charts if needed
 
 ### Browser Automation (`browser-use` + `agent-browser`)
 
@@ -487,7 +388,6 @@ agent-browser wait --load networkidle
 
 # 3. ALWAYS snapshot first — get refs for every interactive element
 agent-browser snapshot -i
-# Output: @e1 [input type="email"] "Email", @e2 [input type="password"], @e3 [button] "Sign In"
 
 # 4. Interact using refs from snapshot
 agent-browser fill @e1 "test@example.com"
@@ -506,236 +406,33 @@ agent-browser diff snapshot                 # see what changed in the DOM
 agent-browser close
 ```
 
-**With `browser-use` (alternative):**
-
-```bash
-browser-use doctor                          # verify installation
-browser-use open http://localhost:3000
-browser-use state                           # get element indices
-browser-use input 3 "test@example.com"
-browser-use screenshot
-browser-use close
-```
-
 **Critical rules:**
-- **Never interact without inspecting first** — always run `snapshot -i` (agent-browser) or `state` (browser-use) before any click/fill
-- **Re-snapshot after every navigation** — refs/indices are invalidated by page changes, DOM updates, modal opens, dropdown expansions
+- **Never interact without inspecting first** — always run `snapshot -i` before any click/fill
+- **Re-snapshot after every navigation** — refs are invalidated by page changes, DOM updates, modal opens
 - **Wait for page load** — use `agent-browser wait --load networkidle` after `open` and after form submissions
-
-#### Browser mode selection
-
-| Situation | `agent-browser` | `browser-use` |
-|---|---|---|
-| Default (fast, headless) | `agent-browser open <url>` | `browser-use open <url>` |
-| Visible window for debugging | `agent-browser --headed open <url>` | `browser-use --headed open <url>` |
-| User's Chrome (existing logins) | `agent-browser --auto-connect open <url>` | `browser-use --connect open <url>` |
-| Real Chrome profile | `agent-browser --profile ~/.myapp open <url>` | `browser-use --profile "Default" open <url>` |
-| Force dark mode | `agent-browser --color-scheme dark open <url>` | N/A (use `eval` instead) |
-
-**Default for this project:** headless for routine verification. Use `--headed` when debugging a specific visual problem.
 
 #### Project-specific commands
 
 ```bash
-# ── Navigation (all pages in the auth flow) ──
-agent-browser open http://localhost:3000                        # Login page
+# ── Auth flow pages ──
+agent-browser open http://localhost:3000                  # Login
 agent-browser open http://localhost:3000/forgot-password
 agent-browser open http://localhost:3000/check-email
 agent-browser open http://localhost:3000/new-password
 
 # ── Theme verification ──
-# Check active theme attribute
 agent-browser eval 'document.documentElement.getAttribute("data-theme")'
-
-# Force dark mode without clicking ThemeToggle
 agent-browser --color-scheme dark open http://localhost:3000
-agent-browser screenshot dark-mode.png
-
-# Force light mode
 agent-browser --color-scheme light open http://localhost:3000
-agent-browser screenshot light-mode.png
 
 # ── CSS token verification ──
-# Verify a design token resolves correctly
 agent-browser eval 'getComputedStyle(document.documentElement).getPropertyValue("--color-brand").trim()'
 
-# Check multiple tokens at once (use --stdin for complex JS)
-agent-browser eval --stdin <<'EVALEOF'
-JSON.stringify({
-  brand: getComputedStyle(document.documentElement).getPropertyValue('--color-brand').trim(),
-  bgBase: getComputedStyle(document.documentElement).getPropertyValue('--bg-base').trim(),
-  textPrimary: getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim(),
-})
-EVALEOF
-
-# ── Responsive testing ──
-# Mobile breakpoint (≤810px — layout shifts from split to stacked)
+# ── Responsive testing (≤810px breakpoint) ──
 agent-browser set viewport 390 844
-agent-browser screenshot mobile.png
-
-# Or use device emulation (sets viewport + user agent together)
 agent-browser set device "iPhone 14"
-agent-browser screenshot iphone.png
-
-# Back to desktop
-agent-browser set viewport 1280 720
-agent-browser screenshot desktop.png
-
-# ── Accessibility testing ──
-# Force reduced-motion and verify opacity fallback
-agent-browser eval --stdin <<'EVALEOF'
-window.matchMedia = q => ({
-  matches: q.includes('reduce'),
-  addEventListener: () => {},
-  removeEventListener: () => {},
-})
-EVALEOF
-agent-browser screenshot reduced-motion.png
-
-# Check for hydration errors
-agent-browser eval 'window.__NEXT_DATA__'
-
-# ── Static export verification ──
-agent-browser open http://localhost:3001    # if serving out/ on a different port
+agent-browser set viewport 1280 720     # back to desktop
 ```
-
-#### Diff-based verification (agent-browser)
-
-The most powerful feature for iterative UI work — see exactly what your code change did.
-
-```bash
-# DOM diff: snapshot → make code change → diff
-agent-browser snapshot -i                          # baseline
-# ... you edit code, page hot-reloads ...
-agent-browser diff snapshot                        # shows + additions, - removals
-
-# Visual pixel diff: screenshot before/after
-agent-browser screenshot baseline.png              # before code change
-# ... make changes ...
-agent-browser screenshot                           # current state
-agent-browser diff screenshot --baseline baseline.png  # red-highlighted pixel diff + mismatch %
-
-# Compare two different pages
-agent-browser diff url http://localhost:3000 http://localhost:3001 --screenshot
-```
-
-**Use diff for:**
-- Confirming a CSS change only affected the intended elements
-- Checking that a component refactor didn't break visual output
-- Comparing dev server vs static export
-- Visual regression after dependency upgrades
-
-#### Annotated screenshots (agent-browser)
-
-Overlays numbered labels on every interactive element — critical for pages with icon-only buttons or unlabeled controls.
-
-```bash
-agent-browser screenshot --annotate
-# Output: image with [1], [2], [3] labels + legend:
-#   [1] @e1 button "Submit"
-#   [2] @e2 link "Home"
-#   [3] @e3 textbox "Email"
-
-# Refs from annotated screenshots are cached — interact immediately
-agent-browser click @e2
-```
-
-**Use annotated screenshots when:**
-- The page has unlabeled icon buttons (e.g., ThemeToggle's sun/moon icons)
-- You need to verify visual layout AND element mapping together
-- Canvas or SVG elements are invisible to text-only snapshots (e.g., Logo.tsx)
-
-#### Semantic locators (agent-browser fallback)
-
-When refs are unavailable or the page DOM is unstable, target elements by visible text, label, role, or test ID:
-
-```bash
-agent-browser find text "Sign In" click
-agent-browser find label "Email" fill "user@test.com"
-agent-browser find role button click --name "Submit"
-agent-browser find placeholder "Enter your email" fill "test@x.com"
-```
-
-#### Reliable form interaction pattern
-
-```bash
-# Full pattern for the login form:
-agent-browser open http://localhost:3000
-agent-browser wait --load networkidle
-agent-browser snapshot -i                              # See all elements + refs
-
-agent-browser fill @e1 "test@example.com"              # Fill email
-agent-browser fill @e2 "Password123"                   # Fill password
-agent-browser screenshot                                # Verify form state before submit
-
-agent-browser click @e3                                 # Submit
-agent-browser wait --load networkidle                   # Wait for navigation/response
-agent-browser snapshot -i                               # Re-snapshot (new page = new refs)
-
-# Test form validation (submit empty form)
-agent-browser open http://localhost:3000
-agent-browser wait --load networkidle
-agent-browser snapshot -i
-agent-browser click @e3                                 # Submit without filling
-agent-browser snapshot -i                               # Check for error states
-agent-browser screenshot                                # Visual: red borders, shake animation
-```
-
-#### Network inspection (agent-browser)
-
-Debug slow loads, failed requests, or unexpected API calls:
-
-```bash
-# Inspect recent network requests
-agent-browser network requests --type xhr,fetch
-agent-browser network requests --status 4xx
-
-# Record full HAR file for detailed analysis
-agent-browser network har start
-# ... perform actions ...
-agent-browser network har stop ./capture.har
-
-# Block specific requests (e.g., test offline behavior)
-agent-browser network route "**/api/*" --abort
-```
-
-#### Wait patterns (agent-browser)
-
-Reliable waiting prevents flaky interactions — never guess timing:
-
-```bash
-agent-browser wait --load networkidle              # Wait for all network activity to settle
-agent-browser wait --text "Welcome back"           # Wait for specific text to appear
-agent-browser wait "#error-message"                # Wait for CSS selector to exist
-agent-browser wait @e1                             # Wait for a specific ref to appear
-agent-browser wait --url "**/dashboard"            # Wait for URL to match pattern
-agent-browser wait --fn "document.readyState === 'complete'"  # Wait for JS condition
-agent-browser wait "#spinner" --state hidden       # Wait for element to disappear
-```
-
-#### Chaining commands
-
-Chain with `&&` when you don't need intermediate output:
-
-```bash
-agent-browser open http://localhost:3000 && agent-browser wait --load networkidle && agent-browser snapshot -i
-agent-browser fill @e1 "user@test.com" && agent-browser fill @e2 "pass" && agent-browser click @e3
-```
-
-Run separately when you need to parse `snapshot -i` output to discover refs first.
-
-#### Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| Browser won't start | `agent-browser close` then retry with `--headed` |
-| Ref not found after click | Page changed — re-run `agent-browser snapshot -i` to get fresh refs |
-| Element not visible / below fold | `agent-browser scroll down 500` then `agent-browser snapshot -i` |
-| Page not loading | Confirm `npm run dev` is running; check port (default 3000) |
-| Stale session / leaked daemon | `agent-browser close --all` then open fresh |
-| Commands timing out unexpectedly | Check for JavaScript dialog: `agent-browser dialog status`, then `dialog accept` or `dialog dismiss` |
-| Complex JS eval gets corrupted by shell | Use `agent-browser eval --stdin <<'EVALEOF'` with heredoc |
-| Run diagnostics | `browser-use doctor` |
 
 #### Cleanup rule
 
@@ -763,14 +460,11 @@ The daemon keeps the browser alive in the background — it will persist indefin
 - Never use `linear` easing for interactive UI elements — it feels robotic; use `ease-out` for enter/exit
 - Never animate layout properties (`top`, `left`, `height`, `width`, `margin`, `padding`) — use `transform` equivalents which are GPU-accelerated
 - Never store animation progress in React `useState` — it triggers a re-render on every frame; use `useMotionValue` or CSS transitions instead
-- Never use `transition: all` — list each animated property explicitly to avoid unexpected transitions and performance hits
 - Never use `<div onClick>` or `<span onClick>` for navigation — use `<a>` or `<Link>` so Cmd/Ctrl+click, middle-click, and right-click work
 - Never use `<div>` or `<span>` with click handlers as buttons — use native `<button>` for correct keyboard/screen-reader behavior
-- Never block paste on inputs (`onPaste` + `preventDefault`) — users paste passwords from managers
 - Never use `user-scalable=no` or `maximum-scale=1` in the viewport meta — this disables zoom for users who need it
 - Never use `outline: none` or `outline: 0` without providing a visible `:focus-visible` replacement
 - Never render images without explicit `width`/`height` or `aspect-ratio` — this causes Cumulative Layout Shift
 - Never render large arrays (>50 items) with `.map()` without virtualization — DOM node count kills performance
 - Never hardcode date, time, or number formats — use `Intl.DateTimeFormat` and `Intl.NumberFormat` for locale-aware formatting
-- Never use three dots `...` when you mean the ellipsis character `…` (U+2026)
 - Never show an error message without stating what to do about it — "Invalid input" is not actionable; "Email must include an @ sign" is
