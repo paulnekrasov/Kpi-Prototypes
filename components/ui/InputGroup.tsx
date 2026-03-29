@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useId, forwardRef } from "react";
-import { Eye, EyeSlash, CheckCircle, WarningCircle } from "@phosphor-icons/react";
+import {
+  Eye,
+  EyeSlash,
+  CheckCircle,
+  WarningCircle,
+  MagnifyingGlass,
+} from "@phosphor-icons/react";
+import { cn } from "@components/utils/cn";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -11,6 +18,12 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   hint?: React.ReactNode;
   containerStyle?: React.CSSProperties;
   containerClassName?: string;
+}
+
+interface SearchInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+  containerClassName?: string;
+  iconClassName?: string;
 }
 
 export const InputGroup = forwardRef<HTMLInputElement, InputProps>(
@@ -136,6 +149,56 @@ export const InputGroup = forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
         </div>
+      </div>
+    );
+  },
+);
+
+export const InputSearch = forwardRef<HTMLInputElement, SearchInputProps>(
+  function InputSearch(
+    {
+      className,
+      containerClassName,
+      iconClassName,
+      autoComplete,
+      spellCheck,
+      ...props
+    },
+    ref,
+  ) {
+    const defaultId = useId();
+    const elementId = props.id || defaultId;
+
+    return (
+      <div
+        data-slot="input-search"
+        className={cn(
+          "flex h-9 w-full items-center gap-2 rounded-[8px] border border-(--border-subtle-plus) bg-(--bg-base) px-3",
+          "transition-[border-color,box-shadow] duration-150 ease-out",
+          "focus-within:border-(--border-brand) focus-within:shadow-[0_0_0_4px_var(--focus-ring)]",
+          containerClassName,
+        )}
+      >
+        <MagnifyingGlass
+          size={16}
+          weight="bold"
+          aria-hidden="true"
+          className={cn("shrink-0 text-(--text-muted)", iconClassName)}
+        />
+        <input
+          ref={ref}
+          id={elementId}
+          type="search"
+          autoComplete={autoComplete ?? "off"}
+          spellCheck={spellCheck ?? false}
+          className={cn(
+            "h-full min-w-0 flex-1 border-0 bg-transparent p-0 text-sm tracking-[-0.15px] text-(--text-primary) outline-none",
+            "placeholder:text-(--text-muted)",
+            "[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none",
+            className,
+          )}
+          {...props}
+        />
       </div>
     );
   },

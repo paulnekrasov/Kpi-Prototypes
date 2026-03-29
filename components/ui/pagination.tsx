@@ -23,8 +23,8 @@ function usePaginationContext() {
 // ─── Shared item style ────────────────────────────────────────────────────────
 
 const itemBase =
-  "inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md text-sm font-medium select-none " +
-  "transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.97] " +
+  "inline-flex items-center justify-center min-h-8 rounded-md text-sm font-normal tracking-[-0.02em] select-none " +
+  "transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.97] " +
   "focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] " +
   "disabled:opacity-40 disabled:pointer-events-none disabled:active:scale-100 " +
   "motion-reduce:transition-none motion-reduce:active:scale-100";
@@ -51,7 +51,7 @@ function PaginationRoot({
       <nav
         data-slot="pagination"
         aria-label="Pagination"
-        className={cn("flex items-center gap-1", className)}
+        className={cn("flex items-center gap-1.5", className)}
       >
         {children}
       </nav>
@@ -74,11 +74,12 @@ function PaginationPrev({ className }: { className?: string }) {
       aria-label="Previous page"
       className={cn(
         itemBase,
-        "border border-(--border-subtle) text-(--text-primary) hover:bg-(--bg-subtle)",
+        "gap-1 px-3 text-(--text-muted) hover:text-(--text-primary)",
         className,
       )}
     >
       <CaretLeft weight="bold" className="size-4" />
+      <span>Previous</span>
     </button>
   );
 }
@@ -98,10 +99,11 @@ function PaginationNext({ className }: { className?: string }) {
       aria-label="Next page"
       className={cn(
         itemBase,
-        "border border-(--border-subtle) text-(--text-primary) hover:bg-(--bg-subtle)",
+        "gap-1 px-3 text-(--text-primary)",
         className,
       )}
     >
+      <span>Next</span>
       <CaretRight weight="bold" className="size-4" />
     </button>
   );
@@ -148,8 +150,8 @@ function PaginationPages({ className }: { className?: string }) {
             className={cn(
               itemBase,
               page === currentPage
-                ? "bg-(--color-brand) text-(--text-on-accent)"
-                : "border border-(--border-subtle) text-(--text-primary) hover:bg-(--bg-subtle)",
+                ? "h-8 min-w-8 border border-(--border-subtle) bg-(--bg-base) px-2.5 text-(--text-primary)"
+                : "h-8 min-w-8 px-2.5 text-(--text-primary) hover:text-(--text-accent)",
               className,
             )}
           >

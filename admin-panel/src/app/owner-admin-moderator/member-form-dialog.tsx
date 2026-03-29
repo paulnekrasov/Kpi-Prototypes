@@ -16,14 +16,14 @@ import { MEMBER_ROLES, DEPARTMENTS } from "./roles-data"
 import { cn } from "@components/utils/cn"
 
 const roleBadgeStyles: Record<MemberRole, string> = {
-  Owner:
-    "bg-(--status-destructive-bg) text-(--color-destructive) border-(--status-destructive-border)",
-  Admin:
-    "bg-(--color-brand)/10 text-(--text-accent) border-(--border-brand)/20",
-  Moderator:
-    "bg-(--status-warning-bg) text-(--color-warning) border-(--status-warning-border)",
-  "Media Rep":
-    "bg-(--status-info-bg) text-(--color-info) border-(--status-info-border)",
+  Owner:     "border-amber-200 bg-amber-50 text-amber-700",
+  HR:        "border-pink-200 bg-pink-50 text-pink-700",
+  Admin:     "border-indigo-200 bg-indigo-100 text-indigo-700",
+  Moderator: "border-sky-200 bg-sky-100 text-sky-700",
+  Support:   "border-pink-200 bg-pink-50 text-pink-700",
+  External:  "border-(--border-subtle) bg-(--bg-subtle) text-(--text-muted)",
+  Internal:  "border-emerald-200 bg-emerald-50 text-emerald-700",
+  Media:     "border-pink-200 bg-pink-50 text-pink-700",
 }
 
 export interface MemberFormData {
@@ -169,6 +169,7 @@ export function MemberFormDialog({
               </label>
               <select
                 id={departmentId}
+                name="department"
                 value={form.department}
                 onChange={(e) =>
                   setForm((p) => ({
@@ -247,7 +248,7 @@ export function MemberFormDialog({
                 onChange={(e) =>
                   setForm((p) => ({ ...p, gmail: e.target.value }))
                 }
-                placeholder="member@team.com"
+                placeholder="member@team.com…"
                 className={inputClasses}
               />
             </div>

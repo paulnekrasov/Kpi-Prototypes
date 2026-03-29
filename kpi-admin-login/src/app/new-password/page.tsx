@@ -187,8 +187,8 @@ export default function NewPassword() {
                                         height: "100%",
                                         width: "100%",
                                         backgroundColor: getStrengthColor(strengthScore),
-                                        transition: "transform 200ms ease-out, background-color 200ms ease-out",
                                         transform: `scaleX(${strengthScore / requirements.length})`,
+                                        transition: "transform var(--transition-enter), background-color var(--transition-enter)",
                                         transformOrigin: "left",
                                     }}
                                 />
@@ -200,7 +200,7 @@ export default function NewPassword() {
                                 style={{
                                     display: "grid",
                                     gridTemplateRows: showSmartHint ? "1fr" : "0fr",
-                                    transition: "grid-template-rows 300ms ease-out",
+                                    transition: "grid-template-rows var(--transition-smooth)",
                                 }}
                             >
                                 <div style={{ overflow: "hidden" }}>
@@ -236,7 +236,7 @@ export default function NewPassword() {
                                 style={{
                                     display: "grid",
                                     gridTemplateRows: showSuccessFeedback ? "1fr" : "0fr",
-                                    transition: "grid-template-rows 300ms ease-out",
+                                    transition: "grid-template-rows var(--transition-smooth)",
                                 }}
                             >
                                 <div style={{ overflow: "hidden" }}>
@@ -266,7 +266,7 @@ export default function NewPassword() {
                             </div>
 
                             {/* Spacer between strength section and confirm field */}
-                            <div style={{ height: (showSmartHint || showSuccessFeedback) ? "12px" : "20px", transition: "height 300ms ease-out" }} />
+                            <div style={{ height: (showSmartHint || showSuccessFeedback) ? "12px" : "20px" }} />
 
                             <InputGroup
                                 ref={confPassRef}
