@@ -266,7 +266,7 @@ export default function RolesPage() {
     "inline-flex h-8 w-8 items-center justify-center rounded-lg border border-(--border-subtle-plus) bg-(--bg-subtle) text-(--text-muted) transition-[background-color,color,border-color,transform] duration-150 ease-out hover:bg-(--bg-base) hover:text-(--text-primary) active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_var(--focus-ring)]";
 
   const destructiveIconButtonClasses =
-    "inline-flex h-8 w-8 items-center justify-center rounded-lg border border-pink-200 bg-pink-50 text-pink-500 transition-[background-color,color,border-color,transform] duration-150 ease-out hover:bg-pink-100 hover:text-pink-600 active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_var(--focus-ring)]";
+    "inline-flex h-8 w-8 items-center justify-center rounded-lg border border-(--status-destructive-border) bg-(--status-destructive-bg) text-(--color-destructive) transition-[background-color,color,border-color,transform] duration-150 ease-out hover:opacity-80 active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_var(--focus-ring-error)]";
 
   const tableSortIcon = (
     <ArrowsDownUp size={16} weight="bold" className="shrink-0 text-(--text-muted)" aria-hidden="true" />
@@ -312,7 +312,7 @@ export default function RolesPage() {
       <div className="min-w-0 flex-1 bg-(--bg-base)">
         <main id="main-content" className="px-5 pb-8 pt-4 sm:px-6 lg:px-[19px]">
           <div className="w-full max-w-[1165px]">
-            <h1 className="text-[38px] font-semibold tracking-[-0.04em] text-(--text-primary)">Roles</h1>
+            <h1 className="text-[38px] font-semibold tracking-[-0.04em] text-(--text-primary) text-wrap-balance">Roles</h1>
 
             <div className="mt-9 space-y-6">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -341,6 +341,7 @@ export default function RolesPage() {
                       <button
                         type="button"
                         onClick={() => setRoleMenuOpen((prev) => !prev)}
+                        aria-expanded={roleMenuOpen}
                         className="inline-flex h-9 w-full items-center justify-between gap-2 rounded-[8px] border border-(--border-subtle-plus) bg-(--bg-base) px-4 text-sm text-(--text-muted) transition-[background-color,color,border-color,box-shadow] duration-150 ease-out hover:text-(--text-primary) focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_var(--focus-ring)] sm:w-[165px]"
                       >
                         <span className="inline-flex items-center gap-2">

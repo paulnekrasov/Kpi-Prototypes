@@ -324,9 +324,7 @@ These rules apply when building navigation structures — tabs, sidebars, bottom
 #### State & Behavior
 
 - Current location must be visually highlighted in navigation — use color, font-weight, or an active indicator (e.g. underline, pill background)
-- Back navigation must be predictable and consistent — preserve scroll position, filter state, and input values when navigating back
-- Never silently reset the navigation stack or unexpectedly jump to the home page
-- Navigating back must restore previous scroll position, filter state, and form input
+- Back navigation must be predictable and consistent — preserve scroll position, filter state, and input values when navigating back; never silently reset the stack or jump home
 - Modals must not be used for primary navigation flows — they break the user's spatial model and back-button behavior
 - Modals and sheets must offer a clear close/dismiss affordance; support swipe-to-dismiss on mobile
 - Overflow menu: when actions exceed available space, use an overflow/more menu (`...`) instead of cramming
@@ -367,13 +365,6 @@ Two browser automation CLIs are available. Both control real Chromium via a pers
 | Verifying a code change had the intended DOM effect | `snapshot -i` → make change → `diff snapshot` to see exactly what changed |
 | Debugging slow page loads or API issues | `agent-browser network har start` → reproduce → `network har stop capture.har` |
 | Recording a walkthrough for documentation | `agent-browser record start demo.webm` → perform flow → `record stop` |
-
-#### When NOT to use
-
-- Reading or searching code — use `Read`, `Grep`, `Glob` instead
-- Simple text/style changes with no visual ambiguity
-- When `npm run dev` is not already running (start it first: `npm run dev`)
-- To look up documentation or external references — use `WebFetch`
 
 #### Mandatory workflow — every session
 

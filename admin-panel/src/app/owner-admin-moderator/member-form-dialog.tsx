@@ -169,6 +169,7 @@ export function MemberFormDialog({
               </label>
               <select
                 id={departmentId}
+                name="department"
                 value={form.department}
                 onChange={(e) =>
                   setForm((p) => ({
@@ -247,7 +248,7 @@ export function MemberFormDialog({
                 onChange={(e) =>
                   setForm((p) => ({ ...p, gmail: e.target.value }))
                 }
-                placeholder="member@team.com"
+                placeholder="member@team.com…"
                 className={inputClasses}
               />
             </div>

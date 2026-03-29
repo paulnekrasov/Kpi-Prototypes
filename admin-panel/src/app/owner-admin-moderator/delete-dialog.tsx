@@ -76,6 +76,7 @@ export function DeleteDialog({
             </label>
             <input
               id={verifyId}
+              name="verification"
               type="text"
               inputMode="numeric"
               autoComplete="off"
@@ -106,7 +107,7 @@ export function DeleteDialog({
               }}
               className={cn(
                 "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-[background-color,opacity,transform] touch-action-manipulation",
-                "border-none bg-(--color-destructive) text-white",
+                "border-none bg-(--color-destructive) text-(--text-on-accent)",
                 "hover:opacity-90 active:scale-[0.97]",
                 "focus-visible:shadow-[0_0_0_4px_var(--focus-ring-error)] focus-visible:outline-none",
                 "disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"

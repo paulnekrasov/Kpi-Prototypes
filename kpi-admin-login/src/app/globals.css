@@ -103,6 +103,11 @@
   .animated-logo {
     animation: none;
   }
+
+  .strength-bar-track > div,
+  .smart-hint-wrapper {
+    transition: none !important;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -226,6 +231,7 @@
   padding: 32px 24px;
   border-radius: 12px;
   border: 1px solid var(--border-subtle);
+  touch-action: manipulation;
 }
 
 [data-theme="dark"] .login-container {
