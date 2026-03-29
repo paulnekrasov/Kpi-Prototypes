@@ -10,7 +10,22 @@
       "WebFetch(domain:ui.shadcn.com)",
       "Bash(npx tsc:*)",
       "Bash(find /c/Users/Asus/OneDrive/Desktop/prototypes/kpi-admin-login -maxdepth 3 -name tokens.css -o -name *.css -type f)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__figma-console__figma_get_status",
+      "mcp__figma-console__figma_get_variables",
+      "mcp__figma-console__figma_reconnect",
+      "mcp__figma-console__figma_execute",
+      "WebFetch(domain:figma-alpha-api.s3.us-west-2.amazonaws.com)",
+      "mcp__figma-console__figma_get_file_data",
+      "Skill(agent-browser)",
+      "Bash(where agent-browser:*)",
+      "Read(//c/Users/Asus/AppData/Roaming/npm/**)",
+      "Bash(cmd //c \"agent-browser open http://localhost:3001/owner-admin-moderator\" 2>&1)",
+      "Bash(powershell.exe -Command \"Get-Command agent-browser -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\" 2>&1)",
+      "Bash(powershell.exe -Command \"where.exe agent-browser 2>&1\" 2>&1)",
+      "Bash(powershell.exe -Command \"where.exe agent-browser.cmd 2>&1; where.exe agent-browser.ps1 2>&1; Get-ChildItem -Path 'C:\\\\Users\\\\Asus\\\\AppData\\\\Roaming\\\\npm' -Filter 'agent*' 2>&1\" 2>&1)",
+      "Bash(powershell.exe -Command \"Get-ChildItem -Path 'C:\\\\Users\\\\Asus' -Recurse -Filter 'agent-browser*' -ErrorAction SilentlyContinue | Select-Object FullName -First 10\" 2>&1)",
+      "Bash(powershell.exe -Command \"Get-ChildItem -Path 'C:\\\\' -Recurse -Filter 'agent-browser.exe' -ErrorAction SilentlyContinue | Select-Object FullName -First 5; Get-ChildItem -Path 'C:\\\\Users\\\\Asus\\\\.cargo\\\\bin' -Filter 'agent-browser*' -ErrorAction SilentlyContinue | Select-Object FullName\" 2>&1)"
     ]
   }
 }
