@@ -17,6 +17,22 @@ shadcn provides **behavior** (Radix primitives: focus traps, keyboard nav, ARIA 
 The project's named CSS classes and `tokens.css` variables provide **visual styling**.
 Never strip named classes. Never hardcode colors. Never use Tailwind `dark:` prefix.
 
+The goal is not to make the UI look "shadcn". The goal is to use the best underlying shadcn/Radix primitive when it helps, then adapt it back to the original Figma design and this repo's visual language.
+Use existing tokens first. If the design genuinely needs a reusable design-system value that does not exist yet, add the minimum new token to `styles/tokens.css` instead of hardcoding a one-off value.
+
+## Agent Flow (required)
+
+This command is the Phase 2A implementation spine for [`figma-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/figma-delivery-agent.md).
+
+Use the agents deliberately in this order:
+1. Before implementation, invoke [`component-reuse-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/component-reuse-agent.md) to lock `reuse`, `extend`, or `keep-local`.
+2. Execute this command only after the reuse decision is clear.
+3. When no shared repo component fits cleanly, load the `shadcn` skill and search for the closest primitive or composition pattern before creating custom structure.
+4. When the design requires interaction polish, motion tuning, sidebar feel, overlay behavior, or micro-interactions, load `design-engineering-skill` during implementation.
+5. Use `agent-browser` as part of implementation, not just at the end.
+6. After code changes, hand off to [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md) for the final post-change gate.
+7. If local behavior is unstable or validation exposes a runtime bug, escalate to [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md) before making more fixes.
+
 ---
 
 ## Workflow
@@ -45,14 +61,22 @@ From the design context, extract:
 
 ### Step 2 — Check existing shared components FIRST
 
-**Before mapping to any shadcn/Radix primitive**, check `../components/`:
-- `../components/ui/` — InputGroup, Button, IconButton, Badge, Card, Dialog, Tabs, sidebar-tab, Pagination
-- `../components/layout/` — Header, BackNavigation, Logo, sidebar, dashboard-shell, table
-- `../components/providers/` — Providers, ThemeToggle, RoleContentTabs
+**Before mapping to any shadcn/Radix primitive**, use the output of `component-reuse-agent`. If no reuse artifact exists yet, run it now. Then check `../components/`:
+- `../components/ui/` - InputGroup, Button, IconButton, Badge, Card, Dialog, Tabs, sidebar-tab, Pagination
+- `../components/layout/` - Header, BackNavigation, Logo, sidebar, dashboard-shell, table
+- `../components/providers/` - Providers, ThemeToggle, RoleContentTabs
 
-If a shared component already covers the pattern, **use it** — do not create a new one or wrap it in Radix unnecessarily.
+If a shared component already covers the pattern, **use it** - do not create a new one or wrap it in Radix unnecessarily.
 
-### Step 3 — Component mapping (only if no shared component exists)
+### Step 3 - shadcn search and component mapping (only if no shared component exists)
+
+Before choosing a primitive, explicitly use the `shadcn` skill or its MCP-backed search flow:
+- search for the closest component or composition pattern
+- prefer a primitive whose behavior matches the Figma interaction model
+- use shadcn for the underlying structure and accessibility behavior
+- then adapt spacing, typography, states, and visual styling back to the Figma target and this repo's tokens
+
+Do not stop at "the shadcn component exists". The component must still be reshaped to match the design.
 
 | Figma pattern | shadcn/Radix primitive |
 |---|---|
@@ -73,14 +97,19 @@ If a shared component already covers the pattern, **use it** — do not create a
 | Custom input | Native `<input>` — no Radix needed |
 | Data table | Native `<table>` with `../components/layout/table` |
 
-**shadcn composition rules — enforce when using these primitives:**
-- `Dialog`/`Sheet`/`Drawer` — always include `<DialogTitle>`/`<SheetTitle>`/`<DrawerTitle>`; use `className="sr-only"` if visually hidden (accessibility requirement)
+**shadcn composition rules - enforce when using these primitives:**
+- `Dialog`/`Sheet`/`Drawer` - always include `<DialogTitle>`/`<SheetTitle>`/`<DrawerTitle>`; use `className="sr-only"` if visually hidden (accessibility requirement)
 - `Button` loading state — compose `<Button disabled><Spinner />{label}</Button>`; no `isPending`/`isLoading` prop
 - `Avatar` — always include `<AvatarFallback>` for failed-image fallback
 - Conditional classNames — `cn()` from `@components/utils/cn`; never manual template ternaries
 - Flex spacing — `flex flex-col gap-*` not `space-y-*`; `flex gap-*` not `space-x-*`
-- Equal dimensions — `size-*` shorthand (e.g. `size-10`) not `w-10 h-10`
-- No manual `z-index` on overlays — Dialog, Sheet, Popover manage their own stacking
+- Equal dimensions - `size-*` shorthand (e.g. `size-10`) not `w-10 h-10`
+- No manual `z-index` on overlays - Dialog, Sheet, Popover manage their own stacking
+
+**Adaptation rule:**
+- Use shadcn for behavior and structure.
+- Use repo tokens, named classes, and Figma-driven spacing/typography for appearance.
+- If the result still feels like generic shadcn instead of the original design, keep adapting until the behavior stays and the visuals align.
 
 ### Step 4 — Check package availability
 
@@ -106,6 +135,7 @@ Do not proceed until the user confirms installation.
 *Styling:*
 - All colors via `var(--*)` tokens — never hex, rgb, hsl
 - All transitions via `var(--transition-fast)` or `var(--transition-smooth)` — never hardcode durations
+- If no existing token fits a recurring design value cleanly, add a new reusable token to `styles/tokens.css` instead of hardcoding it inline
 - Named CSS classes (`.btn-primary`, `.icon-button-secondary`, `.sidebar-tab`, `.input-group`, etc.) are sacred — never replace with bare Tailwind utilities
 - Dark mode via `[data-theme="dark"]` on `<html>` — never Tailwind `dark:` prefix
 - `focus-visible` with `var(--focus-ring)` — never `outline: none` without replacement
@@ -171,12 +201,18 @@ Do not proceed until the user confirms installation.
 - Use `…` (U+2026), not `...`
 
 *Animation:*
-- `prefers-reduced-motion` guard on every transition/animation — replace directional motion with opacity fade, do not remove
+- `prefers-reduced-motion` guard on every transition/animation - replace directional motion with opacity fade, do not remove
 - Never `transition: all` — list properties explicitly
 - Never animate from `scale(0)` — start from `scale(0.95)` + `opacity: 0`
 - Icon state swaps: `opacity` + `scale(0.8→1)` + `filter: blur(4px→0)` at 150ms
 - Use CSS `transition` (interruptible) not `@keyframes` on interactive components
 - SVG animations: apply `transform` to a `<g>` wrapper, not directly to `<svg>`; set `transform-box: fill-box; transform-origin: center` on the `<g>`
+
+When motion or interaction feel matters, explicitly use `design-engineering-skill` to tune:
+- sidebar open/close behavior
+- modal and drawer entrance/exit
+- hover, active, and focus transitions
+- icon swaps, loading states, and success feedback
 
 *Feedback & loading:*
 - Destructive actions (delete, overwrite, disconnect): confirm with a dialog or provide an Undo window with timer
@@ -197,6 +233,7 @@ Check implementation against every item. Fix failures before writing the file:
 
 **Tokens & design system**
 - [ ] `@styles/tokens.css` imported; no hardcoded colors, shadows, or transition durations
+- [ ] New tokens were added only when truly reusable and were placed in `styles/tokens.css`, not inline in component code
 - [ ] No Tailwind `dark:` prefix; named CSS classes preserved (`.btn-primary`, `.sidebar-tab`, etc.)
 - [ ] `cn()` from `@components/utils/cn` for all conditional classNames
 
@@ -236,7 +273,16 @@ agent-browser screenshot
 agent-browser close
 ```
 
-Compare both screenshots against the Figma reference from Step 1. Report differences using the same format as `/validate-figma`. Offer to fix and re-validate (max 3 iterations).
+Compare both screenshots against the Figma reference from Step 1. Report differences using the same format as `/validate-figma`.
+
+Use `agent-browser` deliberately here:
+- inspect the component in the browser
+- verify it no longer reads as default shadcn
+- verify the interaction feel matches the intended design, not just the static screenshot
+
+After local validation, do not self-approve completion. Hand the result to `ui-change-guard-agent` for the actual Phase 3 sign-off.
+
+If repeated fixes reveal behavior you cannot explain, stop and hand off to `frontend-debug-agent` instead of continuing to patch.
 
 ### Step 8 — Output summary
 

@@ -7,7 +7,16 @@ argument-hint: [prototype] (kpi-admin-login | kpi-site | admin-panel | all)
 
 Audit target: **$ARGUMENTS** (default: all three prototypes + shared components)
 
-## Step 0 — Load token vocabulary FIRST (required)
+## Agent Flow (required)
+
+This command provides the detailed audit body for [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md).
+
+Use the agents deliberately like this:
+1. For post-change validation of a current task, invoke `ui-change-guard-agent` as the execution owner and use this command for the actual audit scan.
+2. Use this command directly only for explicit prototype-wide or repo-wide audits.
+3. If the audit reveals a runtime defect that needs stable reproduction, escalate to [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md) instead of continuing to theorize inside the audit.
+
+## Step 0 - Load token vocabulary FIRST (required)
 
 Before scanning any files, read `../styles/tokens.css` (path from any prototype: `prototypes/styles/tokens.css`).
 Build an internal lookup table covering every variable in the file:
@@ -155,4 +164,4 @@ After all files:
 
 **Summary** — counts per category (e.g. "Hardcoded values: 4, Accessibility: 2, Animation: 1, Form: 1, React perf: 2 …")
 
-**Top 3 priorities** — highest-impact fixes to do first
+**Top 3 priorities** - highest-impact fixes to do first

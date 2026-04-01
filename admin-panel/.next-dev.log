@@ -1,0 +1,12 @@
+▲ Next.js 16.1.6 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.100:3000
+- Experiments (use with caution):
+  ✓ externalDir
+
+✓ Starting...
+✓ Ready in 2.7s
+○ Compiling /owner-admin-moderator ...
+ HEAD /owner-admin-moderator 200 in 29.4s (compile: 28.9s, render: 485ms)
+ GET /owner-admin-moderator 200 in 148ms (compile: 12ms, render: 136ms)
+ GET /owner-admin-moderator 200 in 120ms (compile: 7ms, render: 112ms)

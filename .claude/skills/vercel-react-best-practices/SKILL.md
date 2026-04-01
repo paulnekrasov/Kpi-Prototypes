@@ -123,6 +123,13 @@ Each rule file contains:
 - Correct code example with explanation
 - Additional context and references
 
+## Repo Agent Wiring
+
+In this repository, this skill is applied primarily inside implementation and validation flows:
+- [`figma-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/figma-delivery-agent.md) uses it during Phase 2A implementation.
+- Direct non-Figma implementation should apply it after [`component-reuse-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/component-reuse-agent.md) has locked the target scope.
+- [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md) uses it as part of changed-scope review.
+
 ## Full Compiled Document
 
 For the complete guide with all rules expanded: `AGENTS.md`

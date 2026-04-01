@@ -7,6 +7,17 @@ description: Vercel's Web Interface Guidelines — concise rules for building ac
 
 Concise rules for building accessible, fast, delightful UIs. Use MUST/SHOULD/NEVER to guide decisions.
 
+## Repo Agent Wiring
+
+In this repository, use these guidelines through [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md) for post-change validation.
+
+Use the agent deliberately when:
+- reviewing a changed route or component after implementation
+- validating light, dark, and mobile states
+- deciding whether frontend work is ready for sign-off
+
+This skill provides the rules. `ui-change-guard-agent` owns the execution and pass/block decision.
+
 ## Interactions
 
 ### Keyboard

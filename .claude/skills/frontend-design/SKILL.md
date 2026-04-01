@@ -40,3 +40,15 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Repo Agent Wiring
+
+In this repository, use this skill through [`design-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/design-delivery-agent.md) when a task is driven by a designer's instructions rather than a Figma node.
+
+Use the agent deliberately when:
+- a designer gives plain-language UI direction
+- a screen or component needs stronger hierarchy, polish, or interaction feel without a Figma handoff
+- the task is "act like a senior frontend engineer and implement this design intent in the repo"
+
+This skill supplies the creative interpretation and aesthetic direction.
+`design-delivery-agent` owns the execution, repo adaptation, shadcn search, token mapping, browser validation, and handoff to `ui-change-guard-agent` and `frontend-debug-agent`.

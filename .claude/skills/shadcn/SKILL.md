@@ -26,6 +26,18 @@ The JSON above contains the project config and installed components. Use `npx sh
 3. **Use built-in variants before custom styles.** `variant="outline"`, `size="sm"`, etc.
 4. **Use semantic colors.** `bg-primary`, `text-muted-foreground` — never raw values like `bg-blue-500`.
 
+## Repo Agent Wiring
+
+In this repository, the `shadcn` skill is a deliberate support skill for [`figma-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/figma-delivery-agent.md), not a replacement for the repo's own shared component system.
+
+Use it in this order:
+1. Check repo shared components first.
+2. If no shared component fits cleanly, use `shadcn` search or docs lookup to find the closest primitive or composition pattern.
+3. Use that primitive for behavior and structure.
+4. Adapt it back to the Figma design and the repo's token system instead of leaving default shadcn styling in place.
+
+In short: repo component first, shadcn primitive second, custom structure last.
+
 ## Critical Rules
 
 These rules are **always enforced**. Each links to a file with Incorrect/Correct code pairs.

@@ -84,6 +84,17 @@ Each rule file contains:
 - Correct code example with explanation
 - Additional context and references
 
+## Repo Agent Wiring
+
+In this repository, this skill does not own the reuse decision by itself.
+
+Use it through [`component-reuse-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/component-reuse-agent.md) when:
+- deciding whether UI belongs in shared components or route-local code
+- evaluating whether a local pattern should become reusable
+- choosing between explicit variants and monolithic prop growth
+
+The agent owns Phase 1. This skill supplies the composition rules used during that phase.
+
 ## Full Compiled Document
 
 For the complete guide with all rules expanded: `AGENTS.md`

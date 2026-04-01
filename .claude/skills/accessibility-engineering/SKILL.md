@@ -61,6 +61,12 @@ Provide as much as possible:
 - **User Concerns:** Known disability scenarios (blind screen reader users, keyboard-only, motor, cognitive)
 - **Artifacts:** Code snippets, component APIs, design screenshots, design system tokens
 
+## Repo Agent Wiring
+
+In this repository, accessibility review should usually flow through [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md) for post-change checks and through [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md) when accessibility failures are caused by unstable runtime behavior.
+
+Use this skill as the accessibility rulebook inside those agents rather than as a separate free-floating review pass.
+
 ---
 
 ## High-Level Priorities

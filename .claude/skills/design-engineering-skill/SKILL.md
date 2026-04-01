@@ -27,6 +27,18 @@ Load on demand — don't load all files upfront:
 
 ---
 
+## Repo Agent Wiring
+
+In this repository, this skill is a support skill for [`figma-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/figma-delivery-agent.md) when the design needs more than raw structural fidelity.
+
+Use it deliberately for:
+- sidebar behavior and feel
+- modal, drawer, and overlay transitions
+- button hover, press, and loading states
+- micro-interactions that make a Figma adaptation feel polished instead of merely functional
+
+Do not use it to redesign the screen. Use it to preserve Figma intent while improving execution quality.
+
 ## Core Philosophy
 
 > "The best animations are the ones you don't notice." — Emil Kowalski

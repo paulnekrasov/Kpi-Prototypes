@@ -10,8 +10,17 @@ Arguments: `$ARGUMENTS`
 Parse arguments:
 - First arg = localhost path (e.g. `/`, `/forgot-password`, `/owner-admin-moderator`)
 - Second arg = Figma node ID to compare against (e.g. `1234:567`)
-- If only one arg and it starts with `/`, assume it's the path — ask for node ID
+- If only one arg and it starts with `/`, assume it's the path - ask for node ID
 - If only one arg and it looks like a node ID, ask for the path
+
+## Agent Flow (required)
+
+This command is a visual-comparison procedure used inside [`figma-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/figma-delivery-agent.md) and [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md).
+
+Use the agents deliberately in this order:
+1. If this validation is for a fresh implementation, the execution owner remains `figma-delivery-agent`.
+2. The final pass or block decision belongs to `ui-change-guard-agent`, not this command alone.
+3. If the visual mismatch points to unstable runtime behavior, escalation belongs to [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md).
 
 ## Workflow (execute in order, do not skip steps)
 
@@ -121,10 +130,12 @@ Compare the Figma reference screenshot against the browser screenshots. Evaluate
 
 If differences are found, ask: "Fix these automatically? (y/n)"
 - If yes: apply fixes to the relevant source files using `var(--*)` tokens and project conventions
-- After fixing: re-run Steps 2–5 and produce a new comparison report
+- After fixing: re-run Steps 2-5 and produce a new comparison report
 - Max 3 fix iterations
 
-### Step 8 — Clean up
+If differences remain after reasonable iterations, stop and hand the result to `ui-change-guard-agent` or `frontend-debug-agent` depending on whether the issue is a simple implementation mismatch or a runtime bug.
+
+### Step 8 - Clean up
 
 ```bash
 agent-browser close

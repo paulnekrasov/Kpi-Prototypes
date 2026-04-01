@@ -11,6 +11,19 @@ Random fixes waste time and create new bugs. Quick patches mask underlying issue
 
 **Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure.
 
+## Repo Agent Wiring
+
+In this repository, frontend and browser-facing bugs should be executed through [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md).
+
+Use this skill as the debugging method inside that agent.
+
+Typical handoff points:
+- `ui-change-guard-agent` blocks on unstable runtime behavior
+- `validate-figma` exposes a mismatch that is not just styling drift
+- a route, dialog, theme, or hydration flow is broken and needs stable reproduction first
+
+When the bug is inside a Next.js route or app flow, pair this skill with `.agents/skills/next-best-practices/SKILL.md` so the investigation also checks App Router, RSC, async API, hydration, metadata, and file-convention mistakes.
+
 **Violating the letter of this process is violating the spirit of debugging.**
 
 ## The Iron Law

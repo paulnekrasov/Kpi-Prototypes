@@ -8,6 +8,12 @@ user-invocable: false
 
 Apply these rules when writing or reviewing Next.js code.
 
+## Repo Agent Wiring
+
+In this repository, use this skill inside [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md) whenever a bug may be caused by App Router, RSC boundaries, async API usage, hydration, metadata, routing, or other framework-level mistakes.
+
+This skill supplies the framework checks. `frontend-debug-agent` owns the debugging flow and root-cause decision.
+
 ## File Conventions
 
 See [file-conventions.md](./file-conventions.md) for:

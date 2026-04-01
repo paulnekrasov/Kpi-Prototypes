@@ -8,6 +8,15 @@ allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 
 The CLI uses Chrome/Chromium via CDP directly. Install via `npm i -g agent-browser`, `brew install agent-browser`, or `cargo install agent-browser`. Run `agent-browser install` to download Chrome. Run `agent-browser upgrade` to update to the latest version.
 
+## Repo Agent Wiring
+
+In this repository, `agent-browser` is a first-class execution dependency for:
+- [`figma-delivery-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/figma-delivery-agent.md) during local validation
+- [`ui-change-guard-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/ui-change-guard-agent.md) during post-change verification
+- [`frontend-debug-agent`](c:/Users/Asus/OneDrive/Desktop/prototypes/.claude/agents/frontend-debug-agent.md) during runtime reproduction
+
+For Figma adaptation specifically, use `agent-browser` to verify that the result no longer feels like stock shadcn and actually matches the intended design in motion, state changes, and final browser rendering.
+
 ## Core Workflow
 
 Every browser automation follows this pattern:
